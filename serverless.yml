@@ -1,0 +1,23 @@
+service:
+  name: codebuild-slack-notifier
+
+plugins:
+  - serverless-plugin-typescript
+
+provider:
+  name: aws
+  memorySize: 128
+  runtime: nodejs6.10
+  region: eu-west-1
+
+functions:
+  main:
+    handler: index.handler
+    events:
+      - cloudwatchEvent:
+          event:
+            source:
+              - "aws.codebuild"
+            detail-type:
+              - "CodeBuild Build State Change"
+
