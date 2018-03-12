@@ -1,0 +1,7 @@
+phases:
+  install:
+    commands:
+      - yarn install
+  build:
+    commands:
+      - yarn run deploy

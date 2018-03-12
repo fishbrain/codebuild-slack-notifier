@@ -6,6 +6,9 @@
   "repository": "git@github.com:fishbrain/codebuild-slack-notifier.git",
   "author": "Erik Dalén <erik.gustav.dalen@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "deploy": "serverless deploy"
+  },
   "dependencies": {
     "@slack/client": "^4.0.0"
   },
