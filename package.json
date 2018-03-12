@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Send CodeBuild events to Slack",
   "main": "index.ts",
-  "repository": "git@github.com:fishbrain/cloudwatch-event-slack-notifier.git",
+  "repository": "git@github.com:fishbrain/codebuild-slack-notifier.git",
   "author": "Erik Dalén <erik.gustav.dalen@gmail.com>",
   "license": "MIT",
   "dependencies": {
