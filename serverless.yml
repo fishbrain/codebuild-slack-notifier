@@ -9,6 +9,8 @@ provider:
   memorySize: 128
   runtime: nodejs6.10
   region: eu-west-1
+  environment:
+    SLACK_TOKEN: ${ssm:/codebuild-slack-notifier/SLACK_TOKEN}
 
 functions:
   main:
