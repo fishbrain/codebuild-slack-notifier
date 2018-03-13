@@ -156,7 +156,7 @@ const gitRevision = (event: CodeBuildEvent): string => {
     ].source.location.slice(0, -4);
     const pr = sourceVersion.match(/^pr\/(\d+)/);
     if (pr) {
-      return `<${githubProjectUrl}/pull/${pr}|PR#${pr}>`;
+      return `<${githubProjectUrl}/pull/${pr[1]}|Pull request #${pr[1]}>`;
     } else {
       return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
     }
