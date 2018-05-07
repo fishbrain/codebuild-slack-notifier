@@ -16,7 +16,7 @@
     "@types/aws-lambda": "^8.10.3",
     "@types/node": "^10.0.3",
     "prettier": "^1.12.1",
-    "serverless": "^1.27.0",
+    "serverless": "^1.27.1",
     "serverless-plugin-typescript": "^1.1.5",
     "tslint": "^5.9.1",
     "tslint-config-airbnb": "^5.8.0",
