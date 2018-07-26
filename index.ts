@@ -108,8 +108,6 @@ const buildStatusToColor = (status: CodeBuildStatus): string => {
       return 'warning';
     case 'CLIENT_ERROR':
       return 'warning';
-    default:
-      return 'danger';
   }
 };
 
@@ -129,8 +127,6 @@ const buildStatusToText = (status: CodeBuildStatus): string => {
       return 'errored';
     case 'CLIENT_ERROR':
       return 'had client error';
-    default:
-      return 'danger';
   }
 };
 
