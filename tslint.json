@@ -14,11 +14,12 @@
     ],
     "no-var-keyword": true,
     "no-parameter-reassignment": true,
-    "readonly-keyword": true,
     "no-method-signature": true,
     "typedef": [true, "call-signature"],
     "no-let": true,
+    "no-array-mutation": true,
     "no-object-mutation": true,
+    "no-delete": true,
     "no-this": true,
     "no-class": true
   }
