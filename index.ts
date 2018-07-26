@@ -144,7 +144,7 @@ const projectLink = (event: CodeBuildEvent): string => {
 
 // Git revision, possibly with URL
 const gitRevision = (event: CodeBuildEvent): string => {
-  if (event.detail['additional-information'].source.type == 'GITHUB') {
+  if (event.detail['additional-information'].source.type === 'GITHUB') {
     const sourceVersion =
       event.detail['additional-information']['source-version'];
     if (sourceVersion === undefined) {
@@ -157,14 +157,10 @@ const gitRevision = (event: CodeBuildEvent): string => {
     const pr = sourceVersion.match(/^pr\/(\d+)/);
     if (pr) {
       return `<${githubProjectUrl}/pull/${pr[1]}|Pull request #${pr[1]}>`;
-    } else {
-      return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
     }
-  } else {
-    return (
-      event.detail['additional-information']['source-version'] || 'unknown'
-    );
+    return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
   }
+  return event.detail['additional-information']['source-version'] || 'unknown';
 };
 
 const buildEventToMessage = (event: CodeBuildEvent) => {
@@ -192,9 +188,9 @@ const buildEventToMessage = (event: CodeBuildEvent) => {
     }${seconds ? `${seconds} sec` : ''}`;
 
     return {
+      text,
       fallback: text,
       color: buildStatusToColor(event.detail['build-status']),
-      text: text,
       fields: [
         {
           title: 'Git revision',
@@ -205,7 +201,7 @@ const buildEventToMessage = (event: CodeBuildEvent) => {
           .filter(
             phase =>
               phase['phase-status'] != null &&
-              phase['phase-status'] != 'SUCCEEDED',
+              phase['phase-status'] !== 'SUCCEEDED',
           )
           .map(phase => ({
             title: `Phase ${phase[
@@ -224,9 +220,9 @@ const buildEventToMessage = (event: CodeBuildEvent) => {
     event,
   )} ${buildStatusToText(event.detail['build-status'])}`;
   return {
+    text,
     fallback: text,
     color: buildStatusToColor(event.detail['build-status']),
-    text: text,
     fields: [
       {
         title: 'Git revision',
@@ -245,7 +241,9 @@ export const handler: Handler = async (
   // Get list of channels to notify
   const notifyChannels = event.detail['additional-information'].environment[
     'environment-variables'
-  ].find(env => env.type == 'PLAINTEXT' && env.name == 'SLACK_NOFITY_CHANNELS');
+  ].find(
+    env => env.type === 'PLAINTEXT' && env.name === 'SLACK_NOFITY_CHANNELS',
+  );
   if (notifyChannels === undefined) {
     console.log(
       `No notification channels set for ${event.detail['project-name']}`,
