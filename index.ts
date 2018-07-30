@@ -1,96 +1,6 @@
 import { Handler, Context, Callback } from 'aws-lambda';
 import { WebClient } from '@slack/client';
-
-/**
- * See https://docs.aws.amazon.com/codebuild/latest/userguide/sample-build-notifications.html#sample-build-notifications-ref
- */
-type CodeBuildPhase =
-  | 'SUBMITTED'
-  | 'PROVISIONING'
-  | 'DOWNLOAD_SOURCE'
-  | 'INSTALL'
-  | 'PRE_BUILD'
-  | 'BUILD'
-  | 'POST_BUILD'
-  | 'UPLOAD_ARTIFACTS'
-  | 'FINALIZING'
-  | 'COMPLETED';
-
-type CodeBuildStatus =
-  | 'IN_PROGRESS'
-  | 'SUCCEEDED'
-  | 'TIMED_OUT'
-  | 'STOPPED'
-  | 'FAILED'
-  | 'SUCCEEDED'
-  | 'FAULT'
-  | 'CLIENT_ERROR';
-
-interface CodeBuildEvent {
-  version: string;
-  id: string;
-  'detail-type': string;
-  source: 'aws.codebuild';
-  account: string;
-  time: string;
-  region: string;
-  resources: string[];
-  detail: {
-    'build-status': CodeBuildStatus;
-    'project-name': string;
-    'build-id': string;
-    'additional-information': {
-      artifact?: {
-        md5sum: string;
-        sha256sum: string;
-        location: string;
-      };
-      environment: {
-        image: string;
-        'privileged-mode': boolean;
-        'compute-type':
-          | 'BUILD_GENERAL1_SMALL'
-          | 'BUILD_GENERAL1_MEDIUM'
-          | 'BUILD_GENERAL1_LARGE';
-        type: 'LINUX_CONTAINER';
-        'environment-variables': {
-          name: string;
-          value: string;
-          type: 'PLAINTEXT' | 'SSM';
-        }[];
-      };
-      'timeout-in-minutes': number;
-      'build-complete': boolean;
-      initiator: string;
-      'build-start-time': string;
-      source: {
-        buildspec?: string;
-        auth?: {
-          type: string; // can be 'OAUTH' and possibly other values
-        };
-        location: string;
-        type: 'S3' | 'GITHUB';
-      };
-      'source-version'?: string;
-      logs?: {
-        'group-name': string;
-        'stream-name': string;
-        'deep-link': string;
-      };
-      phases: {
-        'phase-context'?: string[];
-        'start-time': string;
-        'end-time'?: string;
-        'duration-in-seconds'?: number;
-        'phase-type': CodeBuildPhase;
-        'phase-status'?: CodeBuildStatus;
-      }[];
-    };
-    'current-phase': CodeBuildPhase;
-    'current-phase-context': string;
-    version: string;
-  };
-}
+import { CodeBuildEvent, CodeBuildStatus } from './codebuild';
 
 const buildStatusToColor = (status: CodeBuildStatus): string => {
   switch (status) {
@@ -130,7 +40,7 @@ const buildStatusToText = (status: CodeBuildStatus): string => {
   }
 };
 
-const projectLink = (event: CodeBuildEvent): string => {
+export const projectLink = (event: CodeBuildEvent): string => {
   return `<https://${
     event.region
   }.console.aws.amazon.com/codebuild/home?region=${event.region}#/projects/${
