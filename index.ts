@@ -1,6 +1,7 @@
 import { Handler, Context, Callback } from 'aws-lambda';
 import { WebClient } from '@slack/client';
 import { CodeBuildEvent, CodeBuildStatus } from './codebuild';
+import { ChannelsResult } from './slack';
 
 const buildStatusToColor = (status: CodeBuildStatus): string => {
   switch (status) {
@@ -174,7 +175,7 @@ export const handler: Handler = async (
   const slack = new WebClient(token);
 
   // Get list of channel
-  const result = await slack.channels.list();
+  const result = (await slack.channels.list()) as ChannelsResult;
   result.channels.forEach(channel => {
     if (projectChannels.find(c => c === channel.name)) {
       slack.chat.postMessage({
