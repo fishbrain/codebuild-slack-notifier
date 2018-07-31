@@ -1,5 +1,11 @@
 import { WebAPICallResult } from '@slack/client';
 
+export type Attachment = {
+  text: string;
+  id: number;
+  fallback: string;
+};
+
 export type Channel = {
   id: string;
   name: string;
@@ -19,11 +25,7 @@ export type Channel = {
     text: string;
     username: string;
     bot_id: string;
-    attachments: {
-      text: string;
-      id: number;
-      fallback: string;
-    }[];
+    attachments: Attachment[];
     type: string;
     subtype: string;
     ts: string;
@@ -50,4 +52,74 @@ export type ChannelResult = WebAPICallResult & {
 
 export type ChannelsResult = WebAPICallResult & {
   channels: Channel[];
+};
+
+export type MessageSubTypes =
+  | 'bot_message'
+  | 'channel_archive'
+  | 'channel_join'
+  | 'channel_leave'
+  | 'channel_leave'
+  | 'channel_purpose'
+  | 'channel_topic'
+  | 'channel_unarchive'
+  | 'file_comment'
+  | 'file_mention'
+  | 'file_share'
+  | 'group_archive'
+  | 'group_join'
+  | 'group_leave'
+  | 'group_name'
+  | 'group_purpose'
+  | 'group_topic'
+  | 'group_unarchive'
+  | 'me_message'
+  | 'message_changed'
+  | 'message_deleted'
+  | 'message_replied'
+  | 'pinned_item'
+  | 'reply_broadcast'
+  | 'thread_broadcast'
+  | 'unpinned_item';
+
+export type MessageReaction = {
+  name: string;
+  count: number;
+  users: string[];
+};
+
+export type Message = {
+  type: string;
+  ts: string;
+  subtype?: MessageSubTypes;
+  text?: string;
+  username?: string;
+  bot_id?: string;
+  attachments?: Attachment[];
+  is_starred?: true;
+  pinned_to?: string[];
+  reactions?: MessageReaction[];
+};
+
+export type ChannelHistoryResult = WebAPICallResult & {
+  latest: string;
+  messages: Message[];
+  has_more: boolean;
+};
+
+export type Bot = {
+  id: string;
+  deleted: boolean;
+  name: string;
+  updated: number;
+  app_id: string;
+  icons: {
+    image_36: string;
+    image_48: string;
+    image_72: string;
+  };
+};
+
+export type BotResult = WebAPICallResult & {
+  bot: Bot;
 };

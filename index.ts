@@ -1,7 +1,13 @@
 import { Handler, Context, Callback } from 'aws-lambda';
 import { WebClient } from '@slack/client';
 import { CodeBuildEvent, CodeBuildStatus } from './codebuild';
-import { ChannelsResult } from './slack';
+import {
+  Channel,
+  ChannelsResult,
+  ChannelHistoryResult,
+  BotResult,
+  Message,
+} from './slack';
 
 const buildStatusToColor = (status: CodeBuildStatus): string => {
   switch (status) {
@@ -140,6 +146,23 @@ const buildEventToMessage = (event: CodeBuildEvent) => {
   };
 };
 
+// Find any previous message for the build
+// so we can update instead of posting a new message
+export const findMyMessages = async (
+  slack: WebClient,
+  bot: Promise<BotResult>,
+  channel: Channel,
+): Promise<Message[]> => {
+  const messages = (await slack.channels.history({
+    channel: channel.id,
+    count: 1000,
+  })) as ChannelHistoryResult;
+
+  const username = (await bot).bot.name;
+
+  return messages.messages.filter(message => message.username === username);
+};
+
 export const handler: Handler = async (
   event: CodeBuildEvent,
   _context: Context,
@@ -173,6 +196,9 @@ export const handler: Handler = async (
     return;
   }
   const slack = new WebClient(token);
+
+  // Get info about self
+  const bot = slack.bots.info() as Promise<BotResult>;
 
   // Get list of channel
   const result = (await slack.channels.list()) as ChannelsResult;
