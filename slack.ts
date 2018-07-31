@@ -1,9 +1,9 @@
-import { WebAPICallResult } from '@slack/client';
+import { WebAPICallResult, MessageAttachment } from '@slack/client';
 
-export type Attachment = {
-  text: string;
+// Response includes extra fields not part of the request
+export type MessageAttachmentResponse = MessageAttachment & {
   id: number;
-  fallback: string;
+  ts: number;
 };
 
 export type Channel = {
@@ -25,7 +25,7 @@ export type Channel = {
     text: string;
     username: string;
     bot_id: string;
-    attachments: Attachment[];
+    attachments: MessageAttachmentResponse[];
     type: string;
     subtype: string;
     ts: string;
@@ -95,7 +95,7 @@ export type Message = {
   text?: string;
   username?: string;
   bot_id?: string;
-  attachments?: Attachment[];
+  attachments?: MessageAttachmentResponse[];
   is_starred?: true;
   pinned_to?: string[];
   reactions?: MessageReaction[];
