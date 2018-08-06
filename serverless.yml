@@ -11,7 +11,7 @@ provider:
   runtime: nodejs8.10
   region: eu-west-1
   environment:
-    SLACK_TOKEN: ${ssm:/codebuild-slack-notifier/SLACK_TOKEN~true}
+    SLACK_TOKEN: ${ssm:/codebuild-slack-notifier/slack_token~true}
 
 functions:
   main:
