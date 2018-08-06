@@ -3,6 +3,7 @@ service:
 
 plugins:
   - serverless-plugin-typescript
+  - serverless-plugin-optimize
 
 provider:
   name: aws
