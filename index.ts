@@ -4,9 +4,11 @@ import { CodeBuildEvent, CodeBuildStatus } from './codebuild';
 import {
   ChannelsResult,
   ChannelHistoryResult,
-  BotResult,
   Message,
+  MessageResult,
 } from './slack';
+
+const messageCache = new Map<[string, string], Message>();
 
 const buildStatusToColor = (status: CodeBuildStatus): string => {
   switch (status) {
@@ -151,34 +153,43 @@ const buildEventToMessage = (event: CodeBuildEvent): MessageAttachment[] => {
         },
       ],
     },
+    {
+      fallback: `Build ID: ${event.detail['build-id']}`,
+      footer: event.detail['build-id'],
+    },
   ];
 };
 
 // Find any previous message for the build
 // so we can update instead of posting a new message
-export const findMyMessages = async (
+export const findMessages = async (
   slack: WebClient,
-  bot: Promise<BotResult>,
   channel: string,
 ): Promise<Message[]> => {
   const messages = (await slack.channels.history({
     channel,
-    count: 1000,
+    count: 20,
   })) as ChannelHistoryResult;
 
-  const username = (await bot).bot.name;
+  console.log('channels.history', JSON.stringify(messages, null, 2));
 
-  return messages.messages.filter(message => message.username === username);
+  return messages.messages;
 };
 
 // Fetch the message for this build
 export const findMessageForBuild = async (
   slack: WebClient,
-  bot: Promise<BotResult>,
   channel: string,
   event: CodeBuildEvent,
 ): Promise<Message | undefined> => {
-  return (await findMyMessages(slack, bot, channel)).find(message => {
+  // If the message is cached, return it
+  const cachedMessage = messageCache.get([channel, event.detail['build-id']]);
+  if (cachedMessage) {
+    return cachedMessage;
+  }
+
+  // If not in cache, search history for it
+  return (await findMessages(slack, channel)).find(message => {
     if (message.attachments == null) {
       return false;
     }
@@ -225,43 +236,42 @@ export const handler: Handler = async (
   }
   const slack = new WebClient(token);
 
-  // Get info about self
-  const bot = slack.bots.info() as Promise<BotResult>;
-
   // Get list of channel
   const result = (await slack.channels.list()) as ChannelsResult;
-  result.channels.forEach(async channel => {
+  const requests = result.channels.map(async channel => {
     if (projectChannels.find(c => c === channel.name)) {
       if (event.detail['additional-information']['build-complete']) {
-        const message = await findMessageForBuild(
-          slack,
-          bot,
-          channel.id,
-          event,
-        );
+        const message = await findMessageForBuild(slack, channel.id, event);
         if (message) {
-          slack.chat.update({
+          return slack.chat.update({
             channel: channel.id,
             attachments: buildEventToMessage(event),
             text: '',
             ts: message.ts,
-          });
-        } else {
-          slack.chat.postMessage({
-            channel: channel.id,
-            attachments: buildEventToMessage(event),
-            text: '',
-          });
+          }) as Promise<MessageResult>;
         }
-      } else {
-        slack.chat.postMessage({
+        return slack.chat.postMessage({
           channel: channel.id,
           attachments: buildEventToMessage(event),
           text: '',
-        });
+        }) as Promise<MessageResult>;
       }
+      return slack.chat.postMessage({
+        channel: channel.id,
+        attachments: buildEventToMessage(event),
+        text: '',
+      }) as Promise<MessageResult>;
     }
   });
-  console.log('Slack Channels:', JSON.stringify(result, null, 2));
-  console.log('Received event:', JSON.stringify(event, null, 2));
+  Promise.all(requests).then(r => {
+    console.log(JSON.stringify(r.filter(i => i != null), null, 2));
+    // Add all sent messages to the cache
+    r.forEach(m => {
+      if (m) {
+        messageCache.set([m.channel, event.detail['build-id']], m.message);
+      }
+    });
+    console.log('Slack Channels:', JSON.stringify(result, null, 2));
+    console.log('Received event:', JSON.stringify(event, null, 2));
+  });
 };

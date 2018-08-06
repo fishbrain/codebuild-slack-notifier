@@ -123,3 +123,27 @@ export type Bot = {
 export type BotResult = WebAPICallResult & {
   bot: Bot;
 };
+
+export type User = {
+  name: string;
+  id: string;
+  email?: string;
+  image_24?: string;
+  image_32?: string;
+  image_48?: string;
+  image_72?: string;
+  image_192?: string;
+};
+
+export type UserResult = WebAPICallResult & {
+  user: User;
+  team: {
+    id: string;
+  };
+};
+
+export type MessageResult = WebAPICallResult & {
+  channel: string;
+  ts: string;
+  message: Message;
+};

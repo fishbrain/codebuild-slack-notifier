@@ -1,4 +1,4 @@
-import { CodeBuildEvent, CodeBuildStatus } from '../codebuild';
+import { CodeBuildEvent } from '../codebuild';
 import { projectLink } from '../index';
 
 const mockEvent: CodeBuildEvent = {
