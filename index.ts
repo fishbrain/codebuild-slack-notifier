@@ -56,6 +56,11 @@ export const projectLink = (event: CodeBuildEvent): string => {
   }/view|${event.detail['project-name']}>`;
 };
 
+// Get the build ID from the Codebuild event
+export const buildId = (event: CodeBuildEvent): string => {
+  return event.detail['build-id'].split(':')[-1];
+};
+
 // Git revision, possibly with URL
 const gitRevision = (event: CodeBuildEvent): string => {
   if (event.detail['additional-information'].source.type === 'GITHUB') {
@@ -131,8 +136,8 @@ const buildEventToMessage = (event: CodeBuildEvent): MessageAttachment[] => {
         ],
       },
       {
-        fallback: `Build ID: ${event.detail['build-id']}`,
-        footer: event.detail['build-id'],
+        fallback: `Build ID: ${buildId(event)}`,
+        footer: buildId(event),
       },
     ];
   }
@@ -154,8 +159,8 @@ const buildEventToMessage = (event: CodeBuildEvent): MessageAttachment[] => {
       ],
     },
     {
-      fallback: `Build ID: ${event.detail['build-id']}`,
-      footer: event.detail['build-id'],
+      fallback: `Build ID: ${buildId(event)}`,
+      footer: buildId(event),
     },
   ];
 };
@@ -183,7 +188,7 @@ export const findMessageForBuild = async (
   event: CodeBuildEvent,
 ): Promise<Message | undefined> => {
   // If the message is cached, return it
-  const cachedMessage = messageCache.get([channel, event.detail['build-id']]);
+  const cachedMessage = messageCache.get([channel, buildId(event)]);
   if (cachedMessage) {
     return cachedMessage;
   }
@@ -193,9 +198,7 @@ export const findMessageForBuild = async (
     if (message.attachments == null) {
       return false;
     }
-    if (
-      message.attachments.find(att => att.footer === event.detail['build-id'])
-    ) {
+    if (message.attachments.find(att => att.footer === buildId(event))) {
       return true;
     }
     return false;
@@ -268,7 +271,7 @@ export const handler: Handler = async (
     // Add all sent messages to the cache
     r.forEach(m => {
       if (m) {
-        messageCache.set([m.channel, event.detail['build-id']], m.message);
+        messageCache.set([m.channel, buildId(event)], m.message);
       }
     });
     console.log('Slack Channels:', JSON.stringify(result, null, 2));
