@@ -1,5 +1,10 @@
 import { CodeBuildEvent, CodeBuildPhaseEvent } from '../codebuild';
-import { projectLink, buildPhaseAttachment, buildId } from '../index';
+import {
+  projectLink,
+  buildPhaseAttachment,
+  buildId,
+  timeString,
+} from '../index';
 
 const mockStateEvent: CodeBuildEvent = {
   version: '0',
@@ -252,6 +257,16 @@ describe('projectLink', () => {
   });
 });
 
+describe('timeString', () => {
+  it('gets the build id from a state event', () => {
+    expect(timeString(5)).toEqual('5s');
+  });
+
+  it('gets the build id from a phase event', () => {
+    expect(timeString(125)).toEqual('2m5s');
+  });
+});
+
 describe('buildId', () => {
   it('gets the build id from a state event', () => {
     expect(buildId(mockStateEvent)).toEqual(
@@ -271,7 +286,7 @@ describe('buildPhaseAttachment', () => {
     expect(buildPhaseAttachment(mockPhaseEvent)).toEqual({
       fallback: 'Current phase: BUILD',
       text:
-        ':white_check_mark: SUBMITTED (0s) :white_check_mark: PROVISIONING (20s) :white_check_mark: DOWNLOAD_SOURCE (15s) :white_check_mark: INSTALL (9s) :white_check_mark: PRE_BUILD (532s) :building_construction: BUILD',
+        ':white_check_mark: SUBMITTED (0s) :white_check_mark: PROVISIONING (20s) :white_check_mark: DOWNLOAD_SOURCE (15s) :white_check_mark: INSTALL (9s) :white_check_mark: PRE_BUILD (8m52s) :building_construction: BUILD',
       title: 'Build Phases',
     });
   });

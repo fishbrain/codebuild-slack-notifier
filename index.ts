@@ -68,6 +68,15 @@ export const buildId = (event: CodeBuildEvent): string => {
   return event.detail['build-id'].split(':').slice(-1)[0];
 };
 
+// Convert seconds to minutes + seconds
+export const timeString = (seconds: number | undefined): string => {
+  if (seconds !== undefined) {
+    return `${seconds > 60 ? `${Math.floor(seconds / 60)}m` : ''}${seconds %
+      60}s`;
+  }
+  return '';
+};
+
 // Git revision, possibly with URL
 const gitRevision = (event: CodeBuildEvent): string => {
   if (event.detail['additional-information'].source.type === 'GITHUB') {
@@ -185,7 +194,9 @@ export const buildPhaseAttachment = (
               phase['phase-status'] === 'SUCCEEDED'
                 ? ':white_check_mark:'
                 : ':red_circle:'
-            } ${phase['phase-type']} (${phase['duration-in-seconds']}s)`;
+            } ${phase['phase-type']} (${timeString(
+              phase['duration-in-seconds'],
+            )})`;
           }
           return `:building_construction: ${phase['phase-type']}`;
         })
