@@ -1,7 +1,7 @@
-import { CodeBuildEvent } from '../codebuild';
-import { projectLink } from '../index';
+import { CodeBuildEvent, CodeBuildPhaseEvent } from '../codebuild';
+import { projectLink, buildPhaseAttachment } from '../index';
 
-const mockEvent: CodeBuildEvent = {
+const mockStateEvent: CodeBuildEvent = {
   version: '0',
   id: 'c030038d-8c4d-6141-9545-00ff7b7153EX',
   'detail-type': 'CodeBuild Build State Change',
@@ -131,10 +131,134 @@ const mockEvent: CodeBuildEvent = {
   },
 };
 
+const mockPhaseEvent: CodeBuildPhaseEvent = {
+  version: '0',
+  id: 'ab4ec3f1-5058-a600-ce26-a9bb30f6e907',
+  'detail-type': 'CodeBuild Build Phase Change',
+  source: 'aws.codebuild',
+  account: '750437945299',
+  time: '2018-08-07T10:58:28Z',
+  region: 'eu-west-1',
+  resources: [
+    'arn:aws:codebuild:eu-west-1:750437945299:build/rutilus:046f6813-1516-43ed-bdab-339f8fdc94af',
+  ],
+  detail: {
+    'completed-phase': 'PRE_BUILD',
+    'project-name': 'rutilus',
+    'build-id':
+      'arn:aws:codebuild:eu-west-1:750437945299:build/rutilus:046f6813-1516-43ed-bdab-339f8fdc94af',
+    'completed-phase-context': '[: ]',
+    'additional-information': {
+      artifact: {
+        location: '',
+      },
+      environment: {
+        image: 'aws/codebuild/docker:17.09.0',
+        'privileged-mode': true,
+        'compute-type': 'BUILD_GENERAL1_LARGE',
+        type: 'LINUX_CONTAINER',
+        'environment-variables': [
+          {
+            name: 'IMAGE_REPO_NAME',
+            type: 'PLAINTEXT',
+            value: '750437945299.dkr.ecr.eu-west-1.amazonaws.com/fishbrain',
+          },
+          {
+            name: 'SLACK_NOFITY_CHANNELS',
+            type: 'PLAINTEXT',
+            value: 'rutilus',
+          },
+        ],
+      },
+      'timeout-in-minutes': 60,
+      'build-complete': false,
+      initiator: 'GitHub-Hookshot/4f5b68a',
+      'build-start-time': 'Aug 7, 2018 10:57:42 AM',
+      source: {
+        buildspec: '',
+        auth: {
+          type: 'OAUTH',
+        },
+        location: 'https://github.com/fishbrain/rutilus-api.git',
+        type: 'GITHUB',
+      },
+      'source-version': 'd5b0159a3ce05a95d7f16055dab3e0ae3cae6cff',
+      logs: {
+        'group-name': '/aws/codebuild/rutilus',
+        'stream-name': '046f6813-1516-43ed-bdab-339f8fdc94af',
+        'deep-link':
+          'https://console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logEvent:group=/aws/codebuild/rutilus;stream=046f6813-1516-43ed-bdab-339f8fdc94af',
+      },
+      phases: [
+        {
+          'phase-context': [],
+          'start-time': 'Aug 7, 2018 10:57:42 AM',
+          'end-time': 'Aug 7, 2018 10:57:42 AM',
+          'duration-in-seconds': 0,
+          'phase-type': 'SUBMITTED',
+          'phase-status': 'SUCCEEDED',
+        },
+        {
+          'phase-context': [': '],
+          'start-time': 'Aug 7, 2018 10:57:42 AM',
+          'end-time': 'Aug 7, 2018 10:58:03 AM',
+          'duration-in-seconds': 20,
+          'phase-type': 'PROVISIONING',
+          'phase-status': 'SUCCEEDED',
+        },
+        {
+          'phase-context': [': '],
+          'start-time': 'Aug 7, 2018 10:58:03 AM',
+          'end-time': 'Aug 7, 2018 10:58:18 AM',
+          'duration-in-seconds': 15,
+          'phase-type': 'DOWNLOAD_SOURCE',
+          'phase-status': 'SUCCEEDED',
+        },
+        {
+          'phase-context': [': '],
+          'start-time': 'Aug 7, 2018 10:58:18 AM',
+          'end-time': 'Aug 7, 2018 10:58:28 AM',
+          'duration-in-seconds': 9,
+          'phase-type': 'INSTALL',
+          'phase-status': 'SUCCEEDED',
+        },
+        {
+          'phase-context': [': '],
+          'start-time': 'Aug 7, 2018 10:58:28 AM',
+          'end-time': 'Aug 7, 2018 11:07:20 AM',
+          'duration-in-seconds': 532,
+          'phase-type': 'PRE_BUILD',
+          'phase-status': 'SUCCEEDED',
+        },
+        {
+          'start-time': 'Aug 7, 2018 11:07:20 AM',
+          'phase-type': 'BUILD',
+        },
+      ],
+    },
+    'completed-phase-status': 'SUCCEEDED',
+    'completed-phase-duration-seconds': 532,
+    version: '1',
+    'completed-phase-start': 'Aug 7, 2018 10:58:28 AM',
+    'completed-phase-end': 'Aug 7, 2018 11:07:20 AM',
+  },
+};
+
 describe('projectLink', () => {
   it('gets the project link from event', () => {
-    expect(projectLink(mockEvent)).toBe(
+    expect(projectLink(mockStateEvent)).toEqual(
       '<https://us-west-2.console.aws.amazon.com/codebuild/home?region=us-west-2#/projects/my-sample-project/view|my-sample-project>',
     );
+  });
+});
+
+describe('buildPhaseAttachment', () => {
+  it('creates an attachment with all phases', () => {
+    expect(buildPhaseAttachment(mockPhaseEvent)).toEqual({
+      fallback: 'PRE_BUILD passed',
+      text:
+        ':white_check_mark: SUBMITTED (0s) :white_check_mark: PROVISIONING (20s) :white_check_mark: DOWNLOAD_SOURCE (15s) :white_check_mark: INSTALL (9s) :white_check_mark: PRE_BUILD (532s) :building_construction: BUILD',
+      title: 'Build Phases',
+    });
   });
 });

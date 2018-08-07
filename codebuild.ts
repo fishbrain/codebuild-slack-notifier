@@ -25,8 +25,8 @@ export type CodeBuildStatus =
 
 type CodeBuildEvendAdditionalInformation = {
   artifact?: {
-    md5sum: string;
-    sha256sum: string;
+    md5sum?: string;
+    sha256sum?: string;
     location: string;
   };
   environment: {
@@ -106,7 +106,7 @@ export interface CodeBuildPhaseEvent {
     'build-id': string;
     'completed-phase-context': string;
     'completed-phase-status': CodeBuildStatus;
-    'completed-phase-duration-seconds': string;
+    'completed-phase-duration-seconds': number;
     version: string;
     'completed-phase-start': string;
     'completed-phase-end': string;
