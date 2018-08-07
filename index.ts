@@ -188,6 +188,11 @@ export const buildPhaseAttachment = (
       fallback: `Current phase: ${phases[phases.length - 1]['phase-type']}`,
       title: 'Build Phases',
       text: phases
+        .filter(
+          phase =>
+            phase['phase-type'] !== 'SUBMITTED' &&
+            phase['phase-type'] !== 'COMPLETED',
+        )
         .map(phase => {
           if (phase['duration-in-seconds'] !== undefined) {
             return `${
