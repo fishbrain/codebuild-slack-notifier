@@ -65,7 +65,7 @@ export const projectLink = (event: CodeBuildEvent): string => {
 
 // Get the build ID from the Codebuild event
 export const buildId = (event: CodeBuildEvent): string => {
-  return event.detail['build-id'].split(':')[-1];
+  return event.detail['build-id'].split(':').slice(-1)[0];
 };
 
 // Git revision, possibly with URL

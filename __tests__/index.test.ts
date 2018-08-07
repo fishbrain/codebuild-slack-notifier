@@ -1,5 +1,5 @@
 import { CodeBuildEvent, CodeBuildPhaseEvent } from '../codebuild';
-import { projectLink, buildPhaseAttachment } from '../index';
+import { projectLink, buildPhaseAttachment, buildId } from '../index';
 
 const mockStateEvent: CodeBuildEvent = {
   version: '0',
@@ -248,6 +248,20 @@ describe('projectLink', () => {
   it('gets the project link from event', () => {
     expect(projectLink(mockStateEvent)).toEqual(
       '<https://us-west-2.console.aws.amazon.com/codebuild/home?region=us-west-2#/projects/my-sample-project/view|my-sample-project>',
+    );
+  });
+});
+
+describe('buildId', () => {
+  it('gets the build id from a state event', () => {
+    expect(buildId(mockStateEvent)).toEqual(
+      '8745a7a9-c340-456a-9166-edf953571bEX',
+    );
+  });
+
+  it('gets the build id from a phase event', () => {
+    expect(buildId(mockPhaseEvent)).toEqual(
+      '046f6813-1516-43ed-bdab-339f8fdc94af',
     );
   });
 });
