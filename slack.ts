@@ -145,5 +145,5 @@ export type UserResult = WebAPICallResult & {
 export type MessageResult = WebAPICallResult & {
   channel: string;
   ts: string;
-  message: Message;
+  message: Message & { ts: undefined };
 };
