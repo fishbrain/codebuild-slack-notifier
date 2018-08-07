@@ -1,11 +1,18 @@
 import { Handler, Context, Callback } from 'aws-lambda';
 import { WebClient, MessageAttachment } from '@slack/client';
-import { CodeBuildEvent, CodeBuildStatus } from './codebuild';
+import {
+  CodeBuildEvent,
+  CodeBuildStateEvent,
+  CodeBuildStatus,
+  isCodeBuildStateEvent,
+  CodeBuildPhaseEvent,
+} from './codebuild';
 import {
   ChannelsResult,
   ChannelHistoryResult,
   Message,
   MessageResult,
+  Channel,
 } from './slack';
 
 const messageCache = new Map<[string, string], Message>();
@@ -83,7 +90,9 @@ const gitRevision = (event: CodeBuildEvent): string => {
 };
 
 // Construct the build message
-const buildEventToMessage = (event: CodeBuildEvent): MessageAttachment[] => {
+const buildEventToMessage = (
+  event: CodeBuildStateEvent,
+): MessageAttachment[] => {
   const startTime = Date.parse(
     event.detail['additional-information']['build-start-time'],
   );
@@ -165,6 +174,61 @@ const buildEventToMessage = (event: CodeBuildEvent): MessageAttachment[] => {
   ];
 };
 
+export const buildPhaseAttachment = (
+  event: CodeBuildPhaseEvent,
+): MessageAttachment => {
+  return {
+    fallback: `${event.detail['completed-phase']} ${buildStatusToText(
+      event.detail['completed-phase-status'],
+    )}`,
+    title: 'Build Phases',
+    text: event.detail['additional-information'].phases
+      .map(phase => {
+        if (phase['duration-in-seconds'] !== undefined) {
+          return {
+            value: `${
+              phase['phase-status'] === 'SUCCEEDED'
+                ? ':white_check_mark:'
+                : ':red_circle:'
+            } ${phase['phase-type']} (${phase['duration-in-seconds']})`,
+            short: true,
+          };
+        }
+        return {
+          value: `:building_construction: ${phase['phase-type']}`,
+          short: true,
+        };
+      })
+      .join(' '),
+  };
+};
+
+// Update a build message with new info
+export const updateBuildMessage = (
+  message: Message,
+  event: CodeBuildPhaseEvent,
+): MessageAttachment[] => {
+  const newPhasesAttachment = buildPhaseAttachment(event);
+  if (message.attachments === undefined) {
+    return [newPhasesAttachment];
+  }
+  if (
+    message.attachments.find(attachment => attachment.title === 'Build Phases')
+  ) {
+    return message.attachments.map(attachment => {
+      if (attachment.title === 'Build Phases') {
+        return newPhasesAttachment;
+      }
+      return attachment;
+    });
+  }
+  return [
+    ...message.attachments.slice(0, -1),
+    newPhasesAttachment,
+    message.attachments[-1],
+  ];
+};
+
 // Find any previous message for the build
 // so we can update instead of posting a new message
 export const findMessages = async (
@@ -205,11 +269,50 @@ export const findMessageForBuild = async (
   });
 };
 
+// Handle the event for one channel
+export const handleEvent = async (
+  event: CodeBuildEvent,
+  slack: WebClient,
+  channel: Channel,
+): Promise<MessageResult | void> => {
+  // State change event
+  if (isCodeBuildStateEvent(event)) {
+    if (event.detail['additional-information']['build-complete']) {
+      const message = await findMessageForBuild(slack, channel.id, event);
+      if (message) {
+        return slack.chat.update({
+          channel: channel.id,
+          attachments: buildEventToMessage(event),
+          text: '',
+          ts: message.ts,
+        }) as Promise<MessageResult>;
+      }
+    }
+    return slack.chat.postMessage({
+      channel: channel.id,
+      attachments: buildEventToMessage(event),
+      text: '',
+    }) as Promise<MessageResult>;
+  }
+  // Phase change event
+  const message = await findMessageForBuild(slack, channel.id, event);
+  if (message) {
+    return slack.chat.update({
+      channel: channel.id,
+      attachments: updateBuildMessage(message, event),
+      text: '',
+      ts: message.ts,
+    }) as Promise<MessageResult>;
+  }
+};
+
 export const handler: Handler = async (
   event: CodeBuildEvent,
   _context: Context,
   _callback: Callback | undefined,
 ) => {
+  console.log('Received event:', JSON.stringify(event, null, 2));
+
   // Get list of channels to notify
   const notifyChannels = event.detail['additional-information'].environment[
     'environment-variables'
@@ -243,27 +346,7 @@ export const handler: Handler = async (
   const result = (await slack.channels.list()) as ChannelsResult;
   const requests = result.channels.map(async channel => {
     if (projectChannels.find(c => c === channel.name)) {
-      if (event.detail['additional-information']['build-complete']) {
-        const message = await findMessageForBuild(slack, channel.id, event);
-        if (message) {
-          return slack.chat.update({
-            channel: channel.id,
-            attachments: buildEventToMessage(event),
-            text: '',
-            ts: message.ts,
-          }) as Promise<MessageResult>;
-        }
-        return slack.chat.postMessage({
-          channel: channel.id,
-          attachments: buildEventToMessage(event),
-          text: '',
-        }) as Promise<MessageResult>;
-      }
-      return slack.chat.postMessage({
-        channel: channel.id,
-        attachments: buildEventToMessage(event),
-        text: '',
-      }) as Promise<MessageResult>;
+      return handleEvent(event, slack, channel);
     }
   });
   Promise.all(requests).then(r => {
@@ -275,6 +358,5 @@ export const handler: Handler = async (
       }
     });
     console.log('Slack Channels:', JSON.stringify(result, null, 2));
-    console.log('Received event:', JSON.stringify(event, null, 2));
   });
 };
