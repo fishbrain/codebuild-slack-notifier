@@ -258,7 +258,7 @@ export const findMessageForBuild = async (
   event: CodeBuildEvent,
 ): Promise<Message | undefined> => {
   // If the message is cached, return it
-  const cachedMessage = messageCache.get(channel + buildId(event));
+  const cachedMessage = messageCache.get([channel, buildId(event)].join(':'));
   if (cachedMessage) {
     return cachedMessage;
   }
@@ -362,7 +362,7 @@ export const handler: Handler = async (
     // Add all sent messages to the cache
     r.forEach(m => {
       if (m) {
-        messageCache.set(m.channel + buildId(event), m.message);
+        messageCache.set([m.channel, buildId(event)].join(':'), m.message);
       }
     });
     console.log('messageCache after', messageCache);
