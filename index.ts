@@ -218,11 +218,7 @@ export const updateBuildMessage = (
       return attachment;
     });
   }
-  return [
-    ...message.attachments.slice(0, -1),
-    newPhasesAttachment,
-    message.attachments[-1],
-  ];
+  return [...message.attachments, newPhasesAttachment];
 };
 
 // Find any previous message for the build
