@@ -232,8 +232,6 @@ export const findMessages = async (
     count: 20,
   })) as ChannelHistoryResult;
 
-  console.log('channels.history', JSON.stringify(messages, null, 2));
-
   return messages.messages;
 };
 
@@ -351,7 +349,6 @@ export const handler: Handler = async (
         messageCache.set([m.channel, buildId(event)], m.message);
       }
     });
-    console.log('Slack Channels:', JSON.stringify(result, null, 2));
     console.log('messageCache after', JSON.stringify(messageCache, null, 2));
   });
 };
