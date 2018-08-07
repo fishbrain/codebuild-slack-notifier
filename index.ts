@@ -348,7 +348,7 @@ export const handler: Handler = async (
   }
   const slack = new WebClient(token);
 
-  console.log('messageCache before', JSON.stringify(messageCache, null, 2));
+  console.log('messageCache before', messageCache);
 
   // Get list of channel
   const result = (await slack.channels.list()) as ChannelsResult;
@@ -365,6 +365,6 @@ export const handler: Handler = async (
         messageCache.set(m.channel + buildId(event), m.message);
       }
     });
-    console.log('messageCache after', JSON.stringify(messageCache, null, 2));
+    console.log('messageCache after', messageCache);
   });
 };
