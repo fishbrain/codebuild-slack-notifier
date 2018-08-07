@@ -185,19 +185,14 @@ export const buildPhaseAttachment = (
     text: event.detail['additional-information'].phases
       .map(phase => {
         if (phase['duration-in-seconds'] !== undefined) {
-          return {
-            value: `${
-              phase['phase-status'] === 'SUCCEEDED'
-                ? ':white_check_mark:'
-                : ':red_circle:'
-            } ${phase['phase-type']} (${phase['duration-in-seconds']})`,
-            short: true,
-          };
+          return;
+          `${
+            phase['phase-status'] === 'SUCCEEDED'
+              ? ':white_check_mark:'
+              : ':red_circle:'
+          } ${phase['phase-type']} (${phase['duration-in-seconds']})`;
         }
-        return {
-          value: `:building_construction: ${phase['phase-type']}`,
-          short: true,
-        };
+        return `:building_construction: ${phase['phase-type']}`;
       })
       .join(' '),
   };
