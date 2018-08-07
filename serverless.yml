@@ -16,6 +16,7 @@ provider:
 functions:
   main:
     handler: index.handler
+    reservedConcurrency: 1
     events:
       - cloudwatchEvent:
           event:
@@ -23,4 +24,5 @@ functions:
               - "aws.codebuild"
             detail-type:
               - "CodeBuild Build State Change"
+              - "CodeBuild Build Phase Change"
 
