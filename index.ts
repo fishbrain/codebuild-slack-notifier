@@ -127,7 +127,7 @@ const buildEventToMessage = (
             value: gitRevision(event),
             short: false,
           },
-          ...event.detail['additional-information'].phases
+          ...(event.detail['additional-information'].phases || [])
             .filter(
               phase =>
                 phase['phase-status'] != null &&
@@ -144,6 +144,7 @@ const buildEventToMessage = (
             })),
         ],
       },
+      buildPhaseAttachment(event),
       {
         fallback: `Build ID: ${buildId(event)}`,
         footer: buildId(event),
@@ -167,6 +168,7 @@ const buildEventToMessage = (
         },
       ],
     },
+    buildPhaseAttachment(event),
     {
       fallback: `Build ID: ${buildId(event)}`,
       footer: buildId(event),
@@ -175,25 +177,31 @@ const buildEventToMessage = (
 };
 
 export const buildPhaseAttachment = (
-  event: CodeBuildPhaseEvent,
+  event: CodeBuildEvent,
 ): MessageAttachment => {
+  const phases = event.detail['additional-information'].phases;
+  if (phases) {
+    return {
+      fallback: `Current phase: ${phases[-1]['phase-type']}`,
+      title: 'Build Phases',
+      text: phases
+        .map(phase => {
+          if (phase['duration-in-seconds'] !== undefined) {
+            return `${
+              phase['phase-status'] === 'SUCCEEDED'
+                ? ':white_check_mark:'
+                : ':red_circle:'
+            } ${phase['phase-type']} (${phase['duration-in-seconds']}s)`;
+          }
+          return `:building_construction: ${phase['phase-type']}`;
+        })
+        .join(' '),
+    };
+  }
   return {
-    fallback: `${event.detail['completed-phase']} ${buildStatusToText(
-      event.detail['completed-phase-status'],
-    )}`,
+    fallback: `not started yet`,
     title: 'Build Phases',
-    text: event.detail['additional-information'].phases
-      .map(phase => {
-        if (phase['duration-in-seconds'] !== undefined) {
-          return `${
-            phase['phase-status'] === 'SUCCEEDED'
-              ? ':white_check_mark:'
-              : ':red_circle:'
-          } ${phase['phase-type']} (${phase['duration-in-seconds']}s)`;
-        }
-        return `:building_construction: ${phase['phase-type']}`;
-      })
-      .join(' '),
+    text: '',
   };
 };
 

@@ -61,7 +61,7 @@ type CodeBuildEvendAdditionalInformation = {
     'stream-name': string;
     'deep-link': string;
   };
-  phases: {
+  phases?: {
     'phase-context'?: string[];
     'start-time': string;
     'end-time'?: string;
