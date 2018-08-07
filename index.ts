@@ -121,6 +121,7 @@ const buildEventToMessage = (
         text,
         fallback: text,
         color: buildStatusToColor(event.detail['build-status']),
+        footer: buildId(event),
         fields: [
           {
             title: 'Git revision',
@@ -145,10 +146,6 @@ const buildEventToMessage = (
         ],
       },
       buildPhaseAttachment(event),
-      {
-        fallback: `Build ID: ${buildId(event)}`,
-        footer: buildId(event),
-      },
     ];
   }
 
@@ -167,12 +164,9 @@ const buildEventToMessage = (
           short: true,
         },
       ],
-    },
-    buildPhaseAttachment(event),
-    {
-      fallback: `Build ID: ${buildId(event)}`,
       footer: buildId(event),
     },
+    buildPhaseAttachment(event),
   ];
 };
 
@@ -182,7 +176,7 @@ export const buildPhaseAttachment = (
   const phases = event.detail['additional-information'].phases;
   if (phases) {
     return {
-      fallback: `Current phase: ${phases[-1]['phase-type']}`,
+      fallback: `Current phase: ${phases[phases.length - 1]['phase-type']}`,
       title: 'Build Phases',
       text: phases
         .map(phase => {
@@ -344,6 +338,8 @@ export const handler: Handler = async (
   }
   const slack = new WebClient(token);
 
+  console.log('messageCache before', JSON.stringify(messageCache, null, 2));
+
   // Get list of channel
   const result = (await slack.channels.list()) as ChannelsResult;
   const requests = result.channels.map(async channel => {
@@ -360,5 +356,6 @@ export const handler: Handler = async (
       }
     });
     console.log('Slack Channels:', JSON.stringify(result, null, 2));
+    console.log('messageCache after', JSON.stringify(messageCache, null, 2));
   });
 };

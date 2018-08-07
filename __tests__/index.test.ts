@@ -255,7 +255,7 @@ describe('projectLink', () => {
 describe('buildPhaseAttachment', () => {
   it('creates an attachment with all phases', () => {
     expect(buildPhaseAttachment(mockPhaseEvent)).toEqual({
-      fallback: 'PRE_BUILD passed',
+      fallback: 'Current phase: BUILD',
       text:
         ':white_check_mark: SUBMITTED (0s) :white_check_mark: PROVISIONING (20s) :white_check_mark: DOWNLOAD_SOURCE (15s) :white_check_mark: INSTALL (9s) :white_check_mark: PRE_BUILD (532s) :building_construction: BUILD',
       title: 'Build Phases',
