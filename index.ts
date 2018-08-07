@@ -157,6 +157,7 @@ const buildEventToMessage = (
       text,
       fallback: text,
       color: buildStatusToColor(event.detail['build-status']),
+      footer: buildId(event),
       fields: [
         {
           title: 'Git revision',
@@ -164,7 +165,6 @@ const buildEventToMessage = (
           short: true,
         },
       ],
-      footer: buildId(event),
     },
     buildPhaseAttachment(event),
   ];
