@@ -286,7 +286,7 @@ describe('buildPhaseAttachment', () => {
     expect(buildPhaseAttachment(mockPhaseEvent)).toEqual({
       fallback: 'Current phase: BUILD',
       text:
-        ':white_check_mark: SUBMITTED (0s) :white_check_mark: PROVISIONING (20s) :white_check_mark: DOWNLOAD_SOURCE (15s) :white_check_mark: INSTALL (9s) :white_check_mark: PRE_BUILD (8m52s) :building_construction: BUILD',
+        ':white_check_mark: PROVISIONING (20s) :white_check_mark: DOWNLOAD_SOURCE (15s) :white_check_mark: INSTALL (9s) :white_check_mark: PRE_BUILD (8m52s) :building_construction: BUILD',
       title: 'Build Phases',
     });
   });
