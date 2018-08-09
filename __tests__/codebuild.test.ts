@@ -1,10 +1,11 @@
-import { CodeBuildEvent, CodeBuildPhaseEvent } from '../codebuild';
 import {
+  CodeBuildEvent,
+  CodeBuildPhaseEvent,
   projectLink,
   buildPhaseAttachment,
   buildId,
   timeString,
-} from '../index';
+} from '../codebuild';
 
 const mockStateEvent: CodeBuildEvent = {
   version: '0',

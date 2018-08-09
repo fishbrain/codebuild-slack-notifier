@@ -1,4 +1,5 @@
-import { WebAPICallResult, MessageAttachment } from '@slack/client';
+import { WebAPICallResult, MessageAttachment, WebClient } from '@slack/client';
+import { messageCache } from '.';
 
 // Response includes extra fields not part of the request
 export type MessageAttachmentResponse = MessageAttachment & {
@@ -150,10 +151,14 @@ export type MessageResult = WebAPICallResult & {
 
 // Update an attachment, or if it doesn't exist, add it
 export const updateOrAddAttachment = (
-  attachments: MessageAttachment[],
+  attachments: MessageAttachment[] | undefined,
   callback: (attachment: MessageAttachment) => boolean,
   newAttachment: MessageAttachment,
 ) => {
+  if (attachments === undefined) {
+    return [newAttachment];
+  }
+
   const index = attachments.findIndex(callback);
   if (index === -1) {
     return [...attachments, newAttachment];
@@ -163,4 +168,43 @@ export const updateOrAddAttachment = (
     newAttachment,
     ...attachments.slice(index + 1),
   ];
+};
+
+// Find any previous message for the build
+// so we can update instead of posting a new message
+export const findMessages = async (
+  slack: WebClient,
+  channel: string,
+): Promise<Message[]> => {
+  const messages = (await slack.channels.history({
+    channel,
+    count: 20,
+  })) as ChannelHistoryResult;
+
+  return messages.messages;
+};
+
+// Fetch the message for this build
+export const findMessageForId = async (
+  slack: WebClient,
+  channel: string,
+  id: string,
+): Promise<Message | undefined> => {
+  // If the message is cached, return it
+  const cachedMessage = messageCache.get([channel, id].join(':'));
+  if (cachedMessage) {
+    console.log('found cached message', cachedMessage);
+    return cachedMessage;
+  }
+
+  // If not in cache, search history for it
+  return (await findMessages(slack, channel)).find(message => {
+    if (message.attachments == null) {
+      return false;
+    }
+    if (message.attachments.find(att => att.footer === id)) {
+      return true;
+    }
+    return false;
+  });
 };
