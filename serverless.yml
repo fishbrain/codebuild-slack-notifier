@@ -12,6 +12,12 @@ provider:
   region: eu-west-1
   environment:
     SLACK_TOKEN: ${ssm:/codebuild-slack-notifier/slack_token~true}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "ssm:GetParametersByPath"
+      Resource:
+        - "arn:aws:ssm:${self:provider.region}:*:parameter/codebuild-slack-notifier"
 
 functions:
   main:
