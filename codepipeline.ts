@@ -183,7 +183,7 @@ export const actionAttachment = (
   return {
     fallback: `Stage ${event.detail.stage} ${event.detail.state}`,
     title: `Stage ${event.detail.stage}`,
-    text: `${stateText[event.detail.state]} (${event.detail.action}`,
+    text: `${stateText[event.detail.state]} (${event.detail.action})`,
     color: stateColors[event.detail.state],
   };
 };
@@ -229,7 +229,7 @@ export const handleCodePipelineEvent = async (
         channel: channel.id,
         attachments: updateOrAddAttachment(
           message.attachments,
-          a => !!(a.title && a.title === 'Stage'),
+          a => !!(a.title && a.title.startsWith('Stage')),
           attachment,
         ),
         text: '',
@@ -250,7 +250,7 @@ export const handleCodePipelineEvent = async (
       channel: channel.id,
       attachments: updateOrAddAttachment(
         message.attachments,
-        a => !!(a.title && a.title === 'Stage'),
+        a => !!(a.title && a.title.startsWith('Stage')),
         attachment,
       ),
       text: '',
