@@ -18,6 +18,12 @@ provider:
         - "ssm:GetParametersByPath"
       Resource:
         - "arn:aws:ssm:${self:provider.region}:*:parameter/codebuild-slack-notifier"
+    - Effect: Allow
+      Action:
+        - "kms:Decrypt"
+      Resource:
+        - "arn:aws:kms:${self:provider.region}:*:key/*"
+
 
 functions:
   main:
