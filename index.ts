@@ -48,7 +48,7 @@ export const handler: Handler = async (
   const projectName = getProjectName(event);
 
   // Get list of channels to notify
-  const notifyChannels = getParameter(parameters, `${projectName}_channel`);
+  const notifyChannels = getParameter(parameters, `${projectName}_channels`);
   if (notifyChannels === undefined) {
     console.log(`Empty notification channel list for ${projectName}`);
     return;
