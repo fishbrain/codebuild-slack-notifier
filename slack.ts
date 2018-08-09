@@ -147,3 +147,20 @@ export type MessageResult = WebAPICallResult & {
   ts: string;
   message: Message & { ts: undefined };
 };
+
+// Update an attachment, or if it doesn't exist, add it
+export const updateOrAddAttachment = (
+  attachments: MessageAttachment[],
+  callback: (attachment: MessageAttachment) => boolean,
+  newAttachment: MessageAttachment,
+) => {
+  const index = attachments.findIndex(callback);
+  if (index === -1) {
+    return [...attachments, newAttachment];
+  }
+  return [
+    ...attachments.slice(0, index),
+    newAttachment,
+    ...attachments.slice(index + 1),
+  ];
+};

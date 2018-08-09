@@ -13,6 +13,7 @@ import {
   Message,
   MessageResult,
   Channel,
+  updateOrAddAttachment,
 } from './slack';
 
 const messageCache = new Map<string, Message>();
@@ -224,17 +225,11 @@ export const updateBuildMessage = (
   if (message.attachments === undefined) {
     return [newPhasesAttachment];
   }
-  if (
-    message.attachments.find(attachment => attachment.title === 'Build Phases')
-  ) {
-    return message.attachments.map(attachment => {
-      if (attachment.title === 'Build Phases') {
-        return newPhasesAttachment;
-      }
-      return attachment;
-    });
-  }
-  return [...message.attachments, newPhasesAttachment];
+  return updateOrAddAttachment(
+    message.attachments,
+    attachment => attachment.title === 'Build Phases',
+    newPhasesAttachment,
+  );
 };
 
 // Find any previous message for the build
