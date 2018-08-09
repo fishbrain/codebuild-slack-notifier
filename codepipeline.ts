@@ -207,7 +207,7 @@ export const handleCodePipelineEvent = async (
         channel: channel.id,
         attachments: updateOrAddAttachment(
           message.attachments,
-          a => !!(a.title && a.title.startsWith('Pipeline ')),
+          a => a.title === attachment.title,
           attachment,
         ),
         text: '',
@@ -229,7 +229,7 @@ export const handleCodePipelineEvent = async (
         channel: channel.id,
         attachments: updateOrAddAttachment(
           message.attachments,
-          a => !!(a.title && a.title.startsWith('Stage')),
+          a => a.title === attachment.title,
           attachment,
         ),
         text: '',
@@ -250,7 +250,7 @@ export const handleCodePipelineEvent = async (
       channel: channel.id,
       attachments: updateOrAddAttachment(
         message.attachments,
-        a => !!(a.title && a.title.startsWith('Stage')),
+        a => a.title === attachment.title,
         attachment,
       ),
       text: '',
