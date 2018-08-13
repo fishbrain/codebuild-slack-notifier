@@ -12,7 +12,7 @@
     "deploy": "serverless deploy"
   },
   "dependencies": {
-    "@slack/client": "^4.3.1",
+    "@slack/client": "^4.4.0",
     "aws-sdk": "^2.290.0"
   },
   "devDependencies": {
