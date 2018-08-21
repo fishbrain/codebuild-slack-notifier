@@ -236,11 +236,7 @@ export const handleCodePipelineEvent = async (
         ts: message.ts,
       }) as Promise<MessageResult>;
     }
-    return slack.chat.postMessage({
-      channel: channel.id,
-      attachments: [stageAttachment(event)],
-      text: '',
-    }) as Promise<MessageResult>;
+    return undefined;
   }
 
   // Action
@@ -257,9 +253,5 @@ export const handleCodePipelineEvent = async (
       ts: message.ts,
     }) as Promise<MessageResult>;
   }
-  return slack.chat.postMessage({
-    channel: channel.id,
-    attachments: [actionAttachment(event)],
-    text: '',
-  }) as Promise<MessageResult>;
+  return undefined;
 };
