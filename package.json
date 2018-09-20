@@ -20,7 +20,7 @@
     "@types/jest": "^23.3.2",
     "@types/node": "^10.10.1",
     "jest": "^23.6.0",
-    "prettier": "^1.14.2",
+    "prettier": "^1.14.3",
     "serverless": "^1.32.0",
     "serverless-plugin-optimize": "^3.1.1-rc.1",
     "serverless-plugin-typescript": "^1.1.5",
