@@ -103,26 +103,6 @@ export type CodePipelineEvent =
   | CodePipelineStageEvent
   | CodePipelineActionEvent;
 
-export const isCodePipelinePiplelineEvent = (
-  event: CodePipelineEvent,
-): event is CodePipelinePiplelineEvent => {
-  return (
-    event['detail-type'] === 'CodePipeline Pipeline Execution State Change'
-  );
-};
-
-export const isCodePipelineStageEvent = (
-  event: CodePipelineEvent,
-): event is CodePipelineStageEvent => {
-  return event['detail-type'] === 'CodePipeline Stage Execution State Change';
-};
-
-export const isCodePipelineActionEvent = (
-  event: CodePipelineEvent,
-): event is CodePipelineActionEvent => {
-  return event['detail-type'] === 'CodePipeline Action Execution State Change';
-};
-
 const stateColors: {
   [K in
     | CodePipelineState
@@ -200,58 +180,57 @@ export const handleCodePipelineEvent = async (
     event.detail['execution-id'],
   );
 
-  if (isCodePipelinePiplelineEvent(event)) {
-    const attachment = pipelineAttachment(event);
-    if (message) {
-      return slack.chat.update({
+  switch (event['detail-type']) {
+    case 'CodePipeline Pipeline Execution State Change':
+      const pAttachment = pipelineAttachment(event);
+      if (message) {
+        return slack.chat.update({
+          channel: channel.id,
+          attachments: updateOrAddAttachment(
+            message.attachments,
+            a => a.title === pAttachment.title,
+            pAttachment,
+          ),
+          text: '',
+          ts: message.ts,
+        }) as Promise<MessageResult>;
+      }
+      return slack.chat.postMessage({
         channel: channel.id,
-        attachments: updateOrAddAttachment(
-          message.attachments,
-          a => a.title === attachment.title,
-          attachment,
-        ),
+        attachments: [pipelineAttachment(event)],
         text: '',
-        ts: message.ts,
       }) as Promise<MessageResult>;
-    }
-    return slack.chat.postMessage({
-      channel: channel.id,
-      attachments: [pipelineAttachment(event)],
-      text: '',
-    }) as Promise<MessageResult>;
-  }
 
-  // Stage
-  if (isCodePipelineStageEvent(event)) {
-    const attachment = stageAttachment(event);
-    if (message) {
-      return slack.chat.update({
-        channel: channel.id,
-        attachments: updateOrAddAttachment(
-          message.attachments,
-          a => a.title === attachment.title,
-          attachment,
-        ),
-        text: '',
-        ts: message.ts,
-      }) as Promise<MessageResult>;
-    }
-    return undefined;
-  }
+    case 'CodePipeline Stage Execution State Change':
+      const sAttachment = stageAttachment(event);
+      if (message) {
+        return slack.chat.update({
+          channel: channel.id,
+          attachments: updateOrAddAttachment(
+            message.attachments,
+            a => a.title === sAttachment.title,
+            sAttachment,
+          ),
+          text: '',
+          ts: message.ts,
+        }) as Promise<MessageResult>;
+      }
+      return undefined;
 
-  // Action
-  const attachment = actionAttachment(event);
-  if (message) {
-    return slack.chat.update({
-      channel: channel.id,
-      attachments: updateOrAddAttachment(
-        message.attachments,
-        a => a.title === attachment.title,
-        attachment,
-      ),
-      text: '',
-      ts: message.ts,
-    }) as Promise<MessageResult>;
+    case 'CodePipeline Action Execution State Change':
+      const aAttachment = actionAttachment(event);
+      if (message) {
+        return slack.chat.update({
+          channel: channel.id,
+          attachments: updateOrAddAttachment(
+            message.attachments,
+            a => a.title === aAttachment.title,
+            aAttachment,
+          ),
+          text: '',
+          ts: message.ts,
+        }) as Promise<MessageResult>;
+      }
+      return undefined;
   }
-  return undefined;
 };
