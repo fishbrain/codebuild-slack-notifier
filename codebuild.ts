@@ -124,18 +124,6 @@ export interface CodeBuildPhaseEvent {
 
 export type CodeBuildEvent = CodeBuildStateEvent | CodeBuildPhaseEvent;
 
-export const isCodeBuildStateEvent = (
-  event: CodeBuildEvent,
-): event is CodeBuildStateEvent => {
-  return event['detail-type'] === 'CodeBuild Build State Change';
-};
-
-export const isCodeBuildPhaseEvent = (
-  event: CodeBuildEvent,
-): event is CodeBuildPhaseEvent => {
-  return event['detail-type'] === 'CodeBuild Build Phase Change';
-};
-
 export const buildStatusToColor = (status: CodeBuildStatus): string => {
   switch (status) {
     case 'IN_PROGRESS':
@@ -341,7 +329,7 @@ export const handleCodeBuildEvent = async (
   channel: Channel,
 ): Promise<MessageResult | void> => {
   // State change event
-  if (isCodeBuildStateEvent(event)) {
+  if (event['detail-type'] === 'CodeBuild Build State Change') {
     if (event.detail['additional-information']['build-complete']) {
       const message = await findMessageForId(slack, channel.id, buildId(event));
       if (message) {
