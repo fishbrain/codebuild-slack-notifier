@@ -1,25 +1,6 @@
 {
-  "extends": [
-    "tslint-config-airbnb",
-    "tslint-immutable",
-    "tslint-config-prettier",
-    "tslint-plugin-prettier"
-  ],
+  "extends": ["tslint-config-fishbrain"],
   "rules": {
-    "variable-name": [
-      true,
-      "ban-keywords",
-      "check-format",
-      "allow-leading-underscore"
-    ],
-    "no-var-keyword": true,
-    "no-parameter-reassignment": true,
-    "no-method-signature": true,
-    "typedef": [true, "call-signature"],
-    "no-let": true,
-    "no-array-mutation": true,
-    "no-object-mutation": true,
-    "no-delete": true,
     "no-this": true,
     "no-class": true
   }

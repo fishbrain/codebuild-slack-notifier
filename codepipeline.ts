@@ -1,8 +1,8 @@
-import { WebClient, MessageAttachment } from '@slack/client';
+import { MessageAttachment, WebClient } from '@slack/client';
 import {
   Channel,
-  MessageResult,
   findMessageForId,
+  MessageResult,
   updateOrAddAttachment,
 } from './slack';
 
@@ -111,8 +111,8 @@ const stateColors: {
 } = {
   CANCELED: 'danger',
   FAILED: 'danger',
-  STARTED: '#439FE0',
   RESUMED: '#439FE0',
+  STARTED: '#439FE0',
   SUCCEEDED: 'good',
   SUPERSEDED: 'warning',
 };
@@ -125,8 +125,8 @@ const stateText: {
 } = {
   CANCELED: ':no_entry: cancelled',
   FAILED: ':x: failed',
-  STARTED: ':building_construction: started',
   RESUMED: ':building_construction: resumed',
+  STARTED: ':building_construction: started',
   SUCCEEDED: ':white_check_mark: succeeded',
   SUPERSEDED: ':x: superseded',
 };
@@ -136,11 +136,11 @@ export const pipelineAttachment = (
   event: CodePipelinePiplelineEvent,
 ): MessageAttachment => {
   return {
-    fallback: `Pipeline ${event.detail.pipeline} ${event.detail.state}`,
-    title: `Pipeline ${event.detail.pipeline}`,
-    text: stateText[event.detail.state],
     color: stateColors[event.detail.state],
+    fallback: `Pipeline ${event.detail.pipeline} ${event.detail.state}`,
     footer: event.detail['execution-id'],
+    text: stateText[event.detail.state],
+    title: `Pipeline ${event.detail.pipeline}`,
   };
 };
 
@@ -149,10 +149,10 @@ export const stageAttachment = (
   event: CodePipelineStageEvent,
 ): MessageAttachment => {
   return {
-    fallback: `Stage ${event.detail.stage} ${event.detail.state}`,
-    title: `Stage ${event.detail.stage}`,
-    text: stateText[event.detail.state],
     color: stateColors[event.detail.state],
+    fallback: `Stage ${event.detail.stage} ${event.detail.state}`,
+    text: stateText[event.detail.state],
+    title: `Stage ${event.detail.stage}`,
   };
 };
 
@@ -161,10 +161,10 @@ export const actionAttachment = (
   event: CodePipelineActionEvent,
 ): MessageAttachment => {
   return {
-    fallback: `Stage ${event.detail.stage} ${event.detail.state}`,
-    title: `Stage ${event.detail.stage}`,
-    text: `${stateText[event.detail.state]} (${event.detail.action})`,
     color: stateColors[event.detail.state],
+    fallback: `Stage ${event.detail.stage} ${event.detail.state}`,
+    text: `${stateText[event.detail.state]} (${event.detail.action})`,
+    title: `Stage ${event.detail.stage}`,
   };
 };
 
@@ -185,19 +185,19 @@ export const handleCodePipelineEvent = async (
       const pAttachment = pipelineAttachment(event);
       if (message) {
         return slack.chat.update({
-          channel: channel.id,
           attachments: updateOrAddAttachment(
             message.attachments,
             a => a.title === pAttachment.title,
             pAttachment,
           ),
+          channel: channel.id,
           text: '',
           ts: message.ts,
         }) as Promise<MessageResult>;
       }
       return slack.chat.postMessage({
-        channel: channel.id,
         attachments: [pipelineAttachment(event)],
+        channel: channel.id,
         text: '',
       }) as Promise<MessageResult>;
 
@@ -205,12 +205,12 @@ export const handleCodePipelineEvent = async (
       const sAttachment = stageAttachment(event);
       if (message) {
         return slack.chat.update({
-          channel: channel.id,
           attachments: updateOrAddAttachment(
             message.attachments,
             a => a.title === sAttachment.title,
             sAttachment,
           ),
+          channel: channel.id,
           text: '',
           ts: message.ts,
         }) as Promise<MessageResult>;
@@ -221,12 +221,12 @@ export const handleCodePipelineEvent = async (
       const aAttachment = actionAttachment(event);
       if (message) {
         return slack.chat.update({
-          channel: channel.id,
           attachments: updateOrAddAttachment(
             message.attachments,
             a => a.title === aAttachment.title,
             aAttachment,
           ),
+          channel: channel.id,
           text: '',
           ts: message.ts,
         }) as Promise<MessageResult>;

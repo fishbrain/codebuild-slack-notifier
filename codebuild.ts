@@ -1,8 +1,8 @@
 import { MessageAttachment, WebClient } from '@slack/client';
 import {
   Channel,
-  MessageResult,
   findMessageForId,
+  MessageResult,
   updateOrAddAttachment,
 } from './slack';
 
@@ -31,7 +31,22 @@ export type CodeBuildStatus =
   | 'FAULT'
   | 'CLIENT_ERROR';
 
-type CodeBuildEvendAdditionalInformation = {
+interface CodeBuildEnvironmentVariable {
+  name: string;
+  value: string;
+  type: 'PLAINTEXT' | 'SSM';
+}
+
+interface CodeBuildPhaseInformation {
+  'phase-context'?: string[];
+  'start-time': string;
+  'end-time'?: string;
+  'duration-in-seconds'?: number;
+  'phase-type': CodeBuildPhase;
+  'phase-status'?: CodeBuildStatus;
+}
+
+interface CodeBuildEvendAdditionalInformation {
   artifact?: {
     md5sum?: string;
     sha256sum?: string;
@@ -45,11 +60,7 @@ type CodeBuildEvendAdditionalInformation = {
       | 'BUILD_GENERAL1_MEDIUM'
       | 'BUILD_GENERAL1_LARGE';
     type: 'LINUX_CONTAINER';
-    'environment-variables': {
-      name: string;
-      value: string;
-      type: 'PLAINTEXT' | 'SSM';
-    }[];
+    'environment-variables': CodeBuildEnvironmentVariable[];
   };
   'timeout-in-minutes': number;
   'build-complete': boolean;
@@ -69,15 +80,8 @@ type CodeBuildEvendAdditionalInformation = {
     'stream-name': string;
     'deep-link': string;
   };
-  phases?: {
-    'phase-context'?: string[];
-    'start-time': string;
-    'end-time'?: string;
-    'duration-in-seconds'?: number;
-    'phase-type': CodeBuildPhase;
-    'phase-status'?: CodeBuildStatus;
-  }[];
-};
+  phases?: CodeBuildPhaseInformation[];
+}
 
 export interface CodeBuildStateEvent {
   version: string;
@@ -212,7 +216,6 @@ export const buildPhaseAttachment = (
   if (phases) {
     return {
       fallback: `Current phase: ${phases[phases.length - 1]['phase-type']}`,
-      title: 'Build Phases',
       text: phases
         .filter(
           phase =>
@@ -232,12 +235,13 @@ export const buildPhaseAttachment = (
           return `:building_construction: ${phase['phase-type']}`;
         })
         .join(' '),
+      title: 'Build Phases',
     };
   }
   return {
     fallback: `not started yet`,
-    title: 'Build Phases',
     text: '',
+    title: 'Build Phases',
   };
 };
 
@@ -262,7 +266,7 @@ const buildEventToMessage = (
     const minutes = Math.floor(elapsedTime / 60 / 1000);
     const seconds = Math.floor(elapsedTime / 1000 - minutes * 60);
 
-    const text = `<${buildUrl}|Build> of ${projectLink(
+    const completeText = `<${buildUrl}|Build> of ${projectLink(
       event,
     )} ${buildStatusToText(event.detail['build-status'])} after ${
       minutes ? `${minutes} min ` : ''
@@ -270,15 +274,13 @@ const buildEventToMessage = (
 
     return [
       {
-        text,
-        fallback: text,
         color: buildStatusToColor(event.detail['build-status']),
-        footer: buildId(event),
+        fallback: completeText,
         fields: [
           {
+            short: false,
             title: 'Git revision',
             value: gitRevision(event),
-            short: false,
           },
           ...(event.detail['additional-information'].phases || [])
             .filter(
@@ -287,15 +289,17 @@ const buildEventToMessage = (
                 phase['phase-status'] !== 'SUCCEEDED',
             )
             .map(phase => ({
+              short: false,
               title: `Phase ${phase[
                 'phase-type'
               ].toLowerCase()} ${buildStatusToText(
                 event.detail['build-status'],
               )}`,
               value: (phase['phase-context'] || []).join('\n'),
-              short: false,
             })),
         ],
+        footer: buildId(event),
+        text: completeText,
       },
       buildPhaseAttachment(event),
     ];
@@ -307,16 +311,16 @@ const buildEventToMessage = (
   return [
     {
       text,
-      fallback: text,
       color: buildStatusToColor(event.detail['build-status']),
-      footer: buildId(event),
+      fallback: text,
       fields: [
         {
+          short: true,
           title: 'Git revision',
           value: gitRevision(event),
-          short: true,
         },
       ],
+      footer: buildId(event),
     },
     buildPhaseAttachment(event),
   ];
@@ -331,19 +335,23 @@ export const handleCodeBuildEvent = async (
   // State change event
   if (event['detail-type'] === 'CodeBuild Build State Change') {
     if (event.detail['additional-information']['build-complete']) {
-      const message = await findMessageForId(slack, channel.id, buildId(event));
-      if (message) {
+      const stateMessage = await findMessageForId(
+        slack,
+        channel.id,
+        buildId(event),
+      );
+      if (stateMessage) {
         return slack.chat.update({
-          channel: channel.id,
           attachments: buildEventToMessage(event),
+          channel: channel.id,
           text: '',
-          ts: message.ts,
+          ts: stateMessage.ts,
         }) as Promise<MessageResult>;
       }
     }
     return slack.chat.postMessage({
-      channel: channel.id,
       attachments: buildEventToMessage(event),
+      channel: channel.id,
       text: '',
     }) as Promise<MessageResult>;
   }
@@ -351,12 +359,12 @@ export const handleCodeBuildEvent = async (
   const message = await findMessageForId(slack, channel.id, buildId(event));
   if (message) {
     return slack.chat.update({
-      channel: channel.id,
       attachments: updateOrAddAttachment(
         message.attachments,
         attachment => attachment.title === 'Build Phases',
         buildPhaseAttachment(event),
       ),
+      channel: channel.id,
       text: '',
       ts: message.ts,
     }) as Promise<MessageResult>;
