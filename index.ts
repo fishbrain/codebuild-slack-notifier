@@ -1,10 +1,10 @@
-import { Handler, Context, Callback } from 'aws-lambda';
-import * as AWS from 'aws-sdk';
 import { WebClient } from '@slack/client';
-import { getParameter } from './ssm';
-import { ChannelsResult, Message } from './slack';
+import { Callback, Context, Handler } from 'aws-lambda';
+import * as AWS from 'aws-sdk';
 import { CodeBuildEvent, handleCodeBuildEvent } from './codebuild';
 import { CodePipelineEvent, handleCodePipelineEvent } from './codepipeline';
+import { ChannelsResult, Message } from './slack';
+import { getParameter } from './ssm';
 
 export const messageCache = new Map<string, Message>();
 

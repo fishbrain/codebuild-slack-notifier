@@ -1,4 +1,4 @@
-import { WebAPICallResult, MessageAttachment, WebClient } from '@slack/client';
+import { MessageAttachment, WebAPICallResult, WebClient } from '@slack/client';
 import { messageCache } from '.';
 
 // Response includes extra fields not part of the request
@@ -7,7 +7,7 @@ export type MessageAttachmentResponse = MessageAttachment & {
   ts: number;
 };
 
-export type Channel = {
+export interface Channel {
   id: string;
   name: string;
   is_channel: boolean;
@@ -45,7 +45,7 @@ export type Channel = {
     last_set: number;
   };
   previous_names: string[];
-};
+}
 
 export type ChannelResult = WebAPICallResult & {
   channel: Channel;
@@ -83,13 +83,13 @@ export type MessageSubTypes =
   | 'thread_broadcast'
   | 'unpinned_item';
 
-export type MessageReaction = {
+export interface MessageReaction {
   name: string;
   count: number;
   users: string[];
-};
+}
 
-export type Message = {
+export interface Message {
   type: string;
   ts: string;
   subtype?: MessageSubTypes;
@@ -100,7 +100,7 @@ export type Message = {
   is_starred?: true;
   pinned_to?: string[];
   reactions?: MessageReaction[];
-};
+}
 
 export type ChannelHistoryResult = WebAPICallResult & {
   latest: string;
@@ -108,7 +108,7 @@ export type ChannelHistoryResult = WebAPICallResult & {
   has_more: boolean;
 };
 
-export type Bot = {
+export interface Bot {
   id: string;
   deleted: boolean;
   name: string;
@@ -119,13 +119,13 @@ export type Bot = {
     image_48: string;
     image_72: string;
   };
-};
+}
 
 export type BotResult = WebAPICallResult & {
   bot: Bot;
 };
 
-export type User = {
+export interface User {
   name: string;
   id: string;
   email?: string;
@@ -134,7 +134,7 @@ export type User = {
   image_48?: string;
   image_72?: string;
   image_192?: string;
-};
+}
 
 export type UserResult = WebAPICallResult & {
   user: User;
