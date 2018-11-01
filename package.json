@@ -31,7 +31,7 @@
     "tslint-config-prettier": "^1.15.0",
     "tslint-immutable": "^4.8.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.1.4"
+    "typescript": "^3.1.5"
   },
   "prettier": {
     "singleQuote": true,
