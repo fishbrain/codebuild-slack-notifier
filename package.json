@@ -18,7 +18,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.15",
     "@types/jest": "^23.3.9",
-    "@types/node": "^10.12.1",
+    "@types/node": "^10.12.2",
     "jest": "^23.6.0",
     "prettier": "^1.14.3",
     "serverless": "^1.32.0",
