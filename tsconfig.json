@@ -2,11 +2,12 @@
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["es6", "esnext.asynciterable"],
+    "module": "esnext",
     "moduleResolution": "node",
-    "module": "commonjs",
     "strict": true,
     "allowJs": true,
     "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
   }
