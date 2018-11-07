@@ -259,11 +259,13 @@ describe('projectLink', () => {
 
 describe('timeString', () => {
   it('gets the build id from a state event', () => {
-    expect(timeString(5)).toEqual('5s');
+    const time = 5;
+    expect(timeString(time)).toEqual('5s');
   });
 
   it('gets the build id from a phase event', () => {
-    expect(timeString(125)).toEqual('2m5s');
+    const time = 125;
+    expect(timeString(time)).toEqual('2m5s');
   });
 });
 
