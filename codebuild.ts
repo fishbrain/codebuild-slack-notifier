@@ -181,9 +181,11 @@ export const buildId = (event: CodeBuildEvent): string => {
 
 // Convert seconds to minutes + seconds
 export const timeString = (seconds: number | undefined): string => {
+  const minute = 60;
   if (seconds !== undefined) {
-    return `${seconds > 60 ? `${Math.floor(seconds / 60)}m` : ''}${seconds %
-      60}s`;
+    return `${
+      seconds > minute ? `${Math.floor(seconds / minute)}m` : ''
+    }${seconds % minute}s`;
   }
   return '';
 };
@@ -199,7 +201,7 @@ const gitRevision = (event: CodeBuildEvent): string => {
     // The location minus '.git'
     const githubProjectUrl = event.detail[
       'additional-information'
-    ].source.location.slice(0, -4);
+    ].source.location.slice(0, '.git'.length);
     const pr = sourceVersion.match(/^pr\/(\d+)/);
     if (pr) {
       return `<${githubProjectUrl}/pull/${pr[1]}|Pull request #${pr[1]}>`;
@@ -261,10 +263,12 @@ const buildEventToMessage = (
   }/view/new`;
 
   if (event.detail['additional-information']['build-complete']) {
+    const minute = 60;
+    const msInS = 1000;
     const endTime = Date.parse(event.time);
     const elapsedTime = endTime - startTime;
-    const minutes = Math.floor(elapsedTime / 60 / 1000);
-    const seconds = Math.floor(elapsedTime / 1000 - minutes * 60);
+    const minutes = Math.floor(elapsedTime / minute / msInS);
+    const seconds = Math.floor(elapsedTime / msInS - minutes * minute);
 
     const completeText = `<${buildUrl}|Build> of ${projectLink(
       event,

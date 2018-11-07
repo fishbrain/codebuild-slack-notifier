@@ -31,7 +31,9 @@ export const handler: Handler = async (
   _context: Context,
   _callback: Callback | undefined,
 ) => {
-  console.log('Received event:', JSON.stringify(event, null, 2));
+  const indentLevel = 2;
+
+  console.log('Received event:', JSON.stringify(event, null, indentLevel));
 
   const ssm = new AWS.SSM();
   const parameters = (await ssm
@@ -73,7 +75,7 @@ export const handler: Handler = async (
     }
   });
   Promise.all(requests).then(r => {
-    console.log(JSON.stringify(r.filter(i => i != null), null, 2));
+    console.log(JSON.stringify(r.filter(i => i != null), null, indentLevel));
     // Add all sent messages to the cache
     /* r.forEach(m => {
       if (m) {
