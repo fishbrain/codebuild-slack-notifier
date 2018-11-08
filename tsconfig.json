@@ -4,6 +4,7 @@
     "lib": ["es6", "esnext.asynciterable"],
     "module": "esnext",
     "moduleResolution": "node",
+    "sourceMap": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
