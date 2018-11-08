@@ -27,5 +27,5 @@ module.exports = {
     ],
   },
   // Workaround for ws module trying to require devDependencies
-  externals: ['utf-8-validate', 'bufferutil'],
+  externals: [/^aws-sdk/, 'utf-8-validate', 'bufferutil'],
 };
