@@ -2,8 +2,7 @@ service:
   name: codebuild-slack-notifier
 
 plugins:
-  - serverless-plugin-typescript
-  - serverless-plugin-optimize
+  - serverless-webpack
 
 provider:
   name: aws

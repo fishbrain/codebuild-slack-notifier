@@ -5,7 +5,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
-    "allowJs": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,

@@ -22,16 +22,18 @@
     "jest": "^23.6.0",
     "prettier": "^1.15.1",
     "serverless": "^1.32.0",
-    "serverless-plugin-optimize": "^3.1.1-rc.1",
-    "serverless-plugin-typescript": "^1.1.5",
+    "serverless-webpack": "^5.2.0",
+    "source-map-support": "^0.5.9",
     "ts-jest": "^23.10.4",
+    "ts-loader": "^5.3.0",
     "tslint": "^5.11.0",
     "tslint-config-airbnb": "^5.11.0",
     "tslint-config-fishbrain": "^4.1.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-immutable": "^4.9.1",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.1.6"
+    "typescript": "^3.1.6",
+    "webpack": "^4.25.1"
   },
   "prettier": {
     "singleQuote": true,
