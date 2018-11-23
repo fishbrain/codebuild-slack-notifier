@@ -20,5 +20,5 @@ With AWS credentials that have access to read from SSM and deploy a lambda.
 Using `chamber`, you can set the corresponding Slack channel(s) for each codebuild project.
 
 ```
-chamber write codebuild-slack-notifier {repository}_channels {slack_channel}
+chamber write codebuild-slack-notifier {project_name}_channels {slack_channel}
 ```
