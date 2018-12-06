@@ -33,7 +33,7 @@
     "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^3.2.1",
     "typescript-tslint-plugin": "0.1.2",
-    "webpack": "^4.27.0"
+    "webpack": "^4.27.1"
   },
   "prettier": {
     "singleQuote": true,
