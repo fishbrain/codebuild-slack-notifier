@@ -8,21 +8,21 @@ provider:
   name: aws
   memorySize: 128
   runtime: nodejs8.10
+  timeout: 15
   region: eu-west-1
   environment:
     SLACK_TOKEN: ${ssm:/codebuild-slack-notifier/slack_token~true}
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - "ssm:GetParametersByPath"
+        - 'ssm:GetParametersByPath'
       Resource:
-        - "arn:aws:ssm:${self:provider.region}:*:parameter/codebuild-slack-notifier"
+        - 'arn:aws:ssm:${self:provider.region}:*:parameter/codebuild-slack-notifier'
     - Effect: Allow
       Action:
-        - "kms:Decrypt"
+        - 'kms:Decrypt'
       Resource:
-        - "arn:aws:kms:${self:provider.region}:*:key/*"
-
+        - 'arn:aws:kms:${self:provider.region}:*:key/*'
 
 functions:
   main:
@@ -32,16 +32,15 @@ functions:
       - cloudwatchEvent:
           event:
             source:
-              - "aws.codebuild"
+              - 'aws.codebuild'
             detail-type:
-              - "CodeBuild Build State Change"
-              - "CodeBuild Build Phase Change"
+              - 'CodeBuild Build State Change'
+              - 'CodeBuild Build Phase Change'
       - cloudwatchEvent:
           event:
             source:
-              - "aws.codepipeline"
+              - 'aws.codepipeline'
             detail-type:
-              - "CodePipeline Pipeline Execution State Change"
-              - "CodePipeline Stage Execution State Change"
-              - "CodePipeline Action Execution State Change"
-
+              - 'CodePipeline Pipeline Execution State Change'
+              - 'CodePipeline Stage Execution State Change'
+              - 'CodePipeline Action Execution State Change'
