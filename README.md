@@ -15,6 +15,12 @@ npm run deploy
 
 With AWS credentials that have access to read from SSM and deploy a lambda.
 
+Additionally, you can modify the deploy command by adding additional serverless arguments:
+
+```shell
+npm run deploy -- --stage production --region us-east-1
+```
+
 ## Configuration
 
 Using `chamber`, you can set the corresponding Slack channel(s) for each codebuild project.
