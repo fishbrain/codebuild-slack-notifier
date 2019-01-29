@@ -16,7 +16,7 @@
     "aws-sdk": "^2.395.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.17",
+    "@types/aws-lambda": "^8.10.18",
     "@types/jest": "^23.3.13",
     "@types/node": "^10.12.19",
     "jest": "^23.6.0",
