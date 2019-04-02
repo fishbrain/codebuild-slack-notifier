@@ -19,7 +19,7 @@
     "@types/aws-lambda": "^8.10.23",
     "@types/jest": "^24.0.11",
     "@types/node": "^11.13.0",
-    "jest": "^24.5.0",
+    "jest": "^24.6.0",
     "prettier": "^1.16.4",
     "serverless": "^1.40.0",
     "serverless-webpack": "^5.2.0",
