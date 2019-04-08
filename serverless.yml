@@ -1,33 +1,35 @@
 service:
-  name: codebuild-slack-notifier
+  name: ${self:custom.package.name}
 
 plugins:
   - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-pseudo-parameters
+
+custom:
+  package: ${file(./package.json)}
 
 provider:
   name: aws
+  stage: ${opt:stage, 'dev'}
   memorySize: 128
   runtime: nodejs8.10
   timeout: 15
-  region: eu-west-1
-  environment:
-    SLACK_TOKEN: ${ssm:/codebuild-slack-notifier/slack_token~true}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - 'ssm:GetParametersByPath'
-      Resource:
-        - 'arn:aws:ssm:${self:provider.region}:*:parameter/codebuild-slack-notifier'
-    - Effect: Allow
-      Action:
-        - 'kms:Decrypt'
-      Resource:
-        - 'arn:aws:kms:${self:provider.region}:*:key/*'
+  region: ${opt:region, 'eu-west-1'}
+
+package:
+  individually: true
 
 functions:
-  main:
+  PostUpdateToSlack:
     handler: index.handler
     reservedConcurrency: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - ssm:GetParametersByPath
+        Resource:
+          - arn:aws:ssm:${self:provider.region}:#{AWS::AccountId}:parameter/codebuild-slack-notifier
     events:
       - cloudwatchEvent:
           event:
