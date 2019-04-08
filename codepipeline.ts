@@ -1,4 +1,4 @@
-import { MessageAttachment, WebClient } from '@slack/client';
+import { MessageAttachment, WebClient } from '@slack/web-api';
 import {
   Channel,
   findMessageForId,

@@ -1,9 +1,9 @@
-import { WebClient } from '@slack/client';
+import { WebClient } from '@slack/web-api';
 import { Callback, Context, Handler } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import { CodeBuildEvent, handleCodeBuildEvent } from './codebuild';
 import { CodePipelineEvent, handleCodePipelineEvent } from './codepipeline';
-import { ChannelsResult, Message } from './slack';
+import { Channel, ChannelsResult, Message } from './slack';
 import { getParameter } from './ssm';
 
 export const messageCache = new Map<string, Message>();
@@ -66,7 +66,7 @@ export const handler: Handler = async (
 
   // Get list of channels
   const result = (await slack.channels.list()) as ChannelsResult;
-  const requests = result.channels.map(async channel => {
+  const requests = result.channels.map(async (channel: Channel) => {
     if (projectChannels.find(c => c === channel.name)) {
       if (isCodePipelineEvent(event)) {
         return handleCodePipelineEvent(event, slack, channel);

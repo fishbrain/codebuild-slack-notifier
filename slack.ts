@@ -1,4 +1,4 @@
-import { MessageAttachment, WebAPICallResult, WebClient } from '@slack/client';
+import { MessageAttachment, WebAPICallResult, WebClient } from '@slack/web-api';
 import { messageCache } from '.';
 
 // Response includes extra fields not part of the request
