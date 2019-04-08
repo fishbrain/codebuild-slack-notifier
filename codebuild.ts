@@ -46,7 +46,7 @@ interface CodeBuildPhaseInformation {
   'phase-status'?: CodeBuildStatus;
 }
 
-interface CodeBuildEvendAdditionalInformation {
+interface CodeBuildEventAdditionalInformation {
   artifact?: {
     md5sum?: string;
     sha256sum?: string;
@@ -96,7 +96,7 @@ export interface CodeBuildStateEvent {
     'build-status': CodeBuildStatus;
     'project-name': string;
     'build-id': string;
-    'additional-information': CodeBuildEvendAdditionalInformation;
+    'additional-information': CodeBuildEventAdditionalInformation;
     'current-phase': CodeBuildPhase;
     'current-phase-context': string;
     version: string;
@@ -122,7 +122,7 @@ export interface CodeBuildPhaseEvent {
     version: string;
     'completed-phase-start': string;
     'completed-phase-end': string;
-    'additional-information': CodeBuildEvendAdditionalInformation;
+    'additional-information': CodeBuildEventAdditionalInformation;
   };
 }
 
