@@ -1,3 +1,5 @@
+import * as AWS from 'aws-sdk';
+
 // Get the value of a single parameter or undefined if not found
 export const getParameter = (
   parameters: AWS.SSM.Parameter[],
