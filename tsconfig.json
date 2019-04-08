@@ -3,6 +3,7 @@
     "target": "ES2017",
     "lib": ["dom", "es6", "esnext.asynciterable"],
     "module": "esnext",
+    "esModuleInterop": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "strict": true,
