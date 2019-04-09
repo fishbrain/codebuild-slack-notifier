@@ -7,6 +7,7 @@ plugins:
   - serverless-pseudo-parameters
 
 custom:
+  env: ${file(./env/${self:provider.stage}.env.yaml)}
   package: ${file(./package.json)}
 
 provider:
@@ -16,6 +17,17 @@ provider:
   runtime: nodejs8.10
   timeout: 15
   region: ${opt:region, 'eu-west-1'}
+  deploymentBucket:
+    name: ${self:custom.env.ROOT_DOMAIN}.${self:custom.env.DOMAIN}.${self:provider.region}.deploys
+    serverSideEncryption: AES256
+  environment:
+    DEBUG: ${self:custom.env.DEBUG, 'true'}
+    TRACE: ${self:custom.env.TRACE, 'false'}
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    VERSION: ${self:custom.package.version}
+    GIT_COMMIT_SHA: ${file(./env/gitCommitSha.js):gitCommitSHA}
+    SERVICE: ${self:service.name}
 
 package:
   individually: true
