@@ -12,7 +12,8 @@ custom:
 
 provider:
   name: aws
-  stage: ${opt:stage, 'dev'}
+  profile: mysense-tools
+  stage: ${opt:stage, 'tools'}
   memorySize: 128
   runtime: nodejs8.10
   timeout: 15
