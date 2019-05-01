@@ -22,7 +22,7 @@
     "jest": "^24.7.1",
     "prettier": "^1.17.0",
     "serverless": "^1.41.1",
-    "serverless-webpack": "^5.2.0",
+    "serverless-webpack": "^5.3.0",
     "ts-jest": "^24.0.2",
     "ts-loader": "^5.4.4",
     "tslint": "^5.16.0",
