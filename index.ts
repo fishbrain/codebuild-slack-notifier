@@ -34,7 +34,7 @@ export const handler: Handler = async (
 ) => {
   try {
     const indentLevel = 2;
-    console.log('Received event:', JSON.stringify(event, null, indentLevel));
+    // console.log('Received event:', JSON.stringify(event, null, indentLevel));
 
     const projectName = getProjectName(event).split('-')[0];
 
@@ -54,6 +54,8 @@ export const handler: Handler = async (
     }
 
     const projectChannels = notifyChannels.Value.split(',');
+    // console.log('Slack channels');
+    // console.log(JSON.stringify(projectChannels, null, indentLevel));
 
     // Connect to slack
     const token = (await ssm
@@ -71,15 +73,18 @@ export const handler: Handler = async (
     }
     const slack = new WebClient(token.Value);
 
-    console.log('messageCache before', messageCache);
+    // console.log('messageCache before', messageCache);
 
     // Get list of channels
     const result = (await slack.channels.list()) as ChannelsResult;
     const requests = result.channels.map(async (channel: Channel) => {
+      // console.log(`Trying channel -> ${channel.name}`);
       if (projectChannels.find(c => c === channel.name)) {
         if (isCodePipelineEvent(event)) {
+          console.log(`Processing CodePipeline event for channel -> ${channel.name}`);
           return handleCodePipelineEvent(event, slack, channel);
         }
+        console.log(`Processing CodeBuild event for channel -> ${channel.name}`);
         return handleCodeBuildEvent(event, slack, channel);
       }
     });
@@ -94,7 +99,7 @@ export const handler: Handler = async (
           });
         }
       }); */
-      console.log('messageCache after', messageCache);
+      // console.log('messageCache after', messageCache);
     });
   }
   catch (err) {
