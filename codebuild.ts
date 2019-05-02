@@ -286,6 +286,11 @@ const buildEventToMessage = (
         fields: [
           {
             short: false,
+            title: 'Initiator',
+            value: event.detail['additional-information'].initiator || 'unknown',
+          },
+          {
+            short: false,
             title: 'Git revision',
             value: gitRevision(event),
           },
