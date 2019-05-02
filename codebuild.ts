@@ -231,7 +231,7 @@ export const buildPhaseAttachment = (
           if (phase['duration-in-seconds'] !== undefined) {
             return `${
               phase['phase-status'] === 'SUCCEEDED'
-                ? ':heavy_tick:'
+                ? ':white_check_mark:'
                 : ':x:'
             } ${phase['phase-type']} (${timeString(
               phase['duration-in-seconds'],
