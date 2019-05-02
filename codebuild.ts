@@ -206,10 +206,10 @@ const gitRevision = (event: CodeBuildEvent): string => {
     }
     // Commit
     if(sourceVersion.length === 40) { // tslint:disable-line:no-magic-numbers
-      return `<${githubProjectUrl}/commit/sourceVersion|${sourceVersion}>`;
+      return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
     }
     // Branch
-    return `<${githubProjectUrl}/tree/sourceVersion|${sourceVersion}>`;
+    return `<${githubProjectUrl}/tree/${sourceVersion}|${sourceVersion}>`;
   }
   return event.detail['additional-information']['source-version'] || 'unknown';
 };
