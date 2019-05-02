@@ -24,7 +24,7 @@
     "serverless": "^1.41.1",
     "serverless-webpack": "^5.3.0",
     "ts-jest": "^24.0.2",
-    "ts-loader": "^5.4.4",
+    "ts-loader": "^5.4.5",
     "tslint": "^5.16.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-config-fishbrain": "^4.1.0",
