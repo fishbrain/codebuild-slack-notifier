@@ -40,9 +40,9 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - ssm:GetParametersByPath
+          - ssm:GetParameter
         Resource:
-          - arn:aws:ssm:${self:provider.region}:#{AWS::AccountId}:parameter/codebuild-slack-notifier
+          - arn:aws:ssm:${self:provider.region}:#{AWS::AccountId}:parameter/codebuild-slack-notifier/*
     events:
       - cloudwatchEvent:
           event:
