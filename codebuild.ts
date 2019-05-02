@@ -198,15 +198,18 @@ const gitRevision = (event: CodeBuildEvent): string => {
     if (sourceVersion === undefined) {
       return 'unknown';
     }
-    // The location minus '.git'
-    const githubProjectUrl = event.detail[
-      'additional-information'
-    ].source.location.slice(0, '.git'.length);
+    const githubProjectUrl = event.detail['additional-information'].source.location;
+    // PR
     const pr = sourceVersion.match(/^pr\/(\d+)/);
     if (pr) {
       return `<${githubProjectUrl}/pull/${pr[1]}|Pull request #${pr[1]}>`;
     }
-    return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
+    // Commit
+    if(sourceVersion.length === 40) { // tslint:disable-line:no-magic-numbers
+      return `<${githubProjectUrl}/commit/sourceVersion|${sourceVersion}>`;
+    }
+    // Branch
+    return `<${githubProjectUrl}/tree/sourceVersion|${sourceVersion}>`;
   }
   return event.detail['additional-information']['source-version'] || 'unknown';
 };
