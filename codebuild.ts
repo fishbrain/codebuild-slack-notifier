@@ -327,6 +327,11 @@ const buildEventToMessage = (
       fallback: text,
       fields: [
         {
+          short: false,
+          title: 'Initiator',
+          value: event.detail['additional-information'].initiator || 'unknown',
+        },
+        {
           short: true,
           title: 'Git revision',
           value: gitRevision(event),
