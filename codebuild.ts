@@ -204,7 +204,7 @@ const gitRevision = (event: CodeBuildEvent): string => {
     if (pr) {
       return `<${githubProjectUrl}/pull/${pr[1]}|Pull request #${pr[1]}>`;
     }
-    // Commit
+    // Commit (a commit sha has a length of 40 chars)
     if(sourceVersion.length === 40) { // tslint:disable-line:no-magic-numbers
       return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
     }
