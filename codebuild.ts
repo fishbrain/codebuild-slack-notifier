@@ -198,7 +198,7 @@ const gitRevision = (event: CodeBuildEvent): string => {
     if (sourceVersion === undefined) {
       return 'unknown';
     }
-    const githubProjectUrl = event.detail['additional-information'].source.location;
+    const githubProjectUrl = event.detail['additional-information'].source.location.slice(0, -('.git'.length));
     // PR
     const pr = sourceVersion.match(/^pr\/(\d+)/);
     if (pr) {
