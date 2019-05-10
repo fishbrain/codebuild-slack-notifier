@@ -7,20 +7,15 @@ plugins:
   - serverless-pseudo-parameters
 
 custom:
-  env: ${file(./env/${self:provider.stage}.env.yaml)}
   package: ${file(./package.json)}
 
 provider:
   name: aws
-  profile: mysense-tools
   stage: ${opt:stage, 'tools'}
   memorySize: 128
   runtime: nodejs8.10
   timeout: 15
   region: ${opt:region, 'eu-west-1'}
-  deploymentBucket:
-    name: ${self:custom.env.ROOT_DOMAIN}.${self:custom.env.DOMAIN}.${self:provider.region}.deploys
-    serverSideEncryption: AES256
   environment:
     DEBUG: ${self:custom.env.DEBUG, 'true'}
     TRACE: ${self:custom.env.TRACE, 'false'}
