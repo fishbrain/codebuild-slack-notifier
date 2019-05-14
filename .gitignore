@@ -60,3 +60,5 @@ typings/
 # Serverless framework
 .serverless
 .build
+
+.idea

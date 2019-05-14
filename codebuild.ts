@@ -1,4 +1,4 @@
-import { MessageAttachment, WebClient } from '@slack/client';
+import { MessageAttachment, WebClient } from '@slack/web-api';
 import {
   Channel,
   findMessageForId,
@@ -46,7 +46,7 @@ interface CodeBuildPhaseInformation {
   'phase-status'?: CodeBuildStatus;
 }
 
-interface CodeBuildEvendAdditionalInformation {
+interface CodeBuildEventAdditionalInformation {
   artifact?: {
     md5sum?: string;
     sha256sum?: string;
@@ -96,7 +96,7 @@ export interface CodeBuildStateEvent {
     'build-status': CodeBuildStatus;
     'project-name': string;
     'build-id': string;
-    'additional-information': CodeBuildEvendAdditionalInformation;
+    'additional-information': CodeBuildEventAdditionalInformation;
     'current-phase': CodeBuildPhase;
     'current-phase-context': string;
     version: string;
@@ -122,7 +122,7 @@ export interface CodeBuildPhaseEvent {
     version: string;
     'completed-phase-start': string;
     'completed-phase-end': string;
-    'additional-information': CodeBuildEvendAdditionalInformation;
+    'additional-information': CodeBuildEventAdditionalInformation;
   };
 }
 
@@ -198,15 +198,18 @@ const gitRevision = (event: CodeBuildEvent): string => {
     if (sourceVersion === undefined) {
       return 'unknown';
     }
-    // The location minus '.git'
-    const githubProjectUrl = event.detail[
-      'additional-information'
-    ].source.location.slice(0, '.git'.length);
+    const githubProjectUrl = event.detail['additional-information'].source.location.slice(0, -('.git'.length));
+    // PR
     const pr = sourceVersion.match(/^pr\/(\d+)/);
     if (pr) {
       return `<${githubProjectUrl}/pull/${pr[1]}|Pull request #${pr[1]}>`;
     }
-    return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
+    // Commit (a commit sha has a length of 40 chars)
+    if(sourceVersion.length === 40) { // tslint:disable-line:no-magic-numbers
+      return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
+    }
+    // Branch
+    return `<${githubProjectUrl}/tree/${sourceVersion}|${sourceVersion}>`;
   }
   return event.detail['additional-information']['source-version'] || 'unknown';
 };
@@ -283,6 +286,11 @@ const buildEventToMessage = (
         fields: [
           {
             short: false,
+            title: 'Initiator',
+            value: event.detail['additional-information'].initiator || 'unknown',
+          },
+          {
+            short: false,
             title: 'Git revision',
             value: gitRevision(event),
           },
@@ -318,6 +326,11 @@ const buildEventToMessage = (
       color: buildStatusToColor(event.detail['build-status']),
       fallback: text,
       fields: [
+        {
+          short: false,
+          title: 'Initiator',
+          value: event.detail['additional-information'].initiator || 'unknown',
+        },
         {
           short: true,
           title: 'Git revision',
