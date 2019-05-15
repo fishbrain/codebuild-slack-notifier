@@ -5270,10 +5270,10 @@ serialize-javascript@^1.4.0:
   resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-1.7.0.tgz#d6e0dfb2a3832a8c94468e6eb1db97e55a192a65"
   integrity sha512-ke8UG8ulpFOxO8f8gRYabHQe/ZntKlcig2Mp+8+URDP1D8vJZ0KUt7LYo07q25Z/+JVSgpr/cui9PIp5H6/+nA==
 
-serverless-iam-roles-per-function@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/serverless-iam-roles-per-function/-/serverless-iam-roles-per-function-1.0.4.tgz#7a182c5e148bee4b67b64a96b4f09f7cf86fb0b4"
-  integrity sha512-hmOYeVZeWfE4r7NrTBdKpkmhPt/EhN9WZt6H3iDCOli+nHituvUlDZTkEK/qbCpp9Z7nNJYNaQW2K/3OkaLMXw==
+serverless-iam-roles-per-function@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/serverless-iam-roles-per-function/-/serverless-iam-roles-per-function-2.0.1.tgz#542ad4e3c1473785b7f66a5f692ddaebf4cc7f67"
+  integrity sha512-3t8BsC4CxsXfBtL80xaz5vcRiAe6x4tKfDByGtmMj8fr5q3AvH4PHlhnPPtSYVYgleY02K9Bfh8kf4UrkgshFQ==
   dependencies:
     lodash "^4.17.10"
 
