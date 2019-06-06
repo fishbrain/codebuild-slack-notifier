@@ -6465,10 +6465,10 @@ tslint-immutable@^4.8.0:
   resolved "https://registry.yarnpkg.com/tslint-immutable/-/tslint-immutable-4.9.1.tgz#ca4555d04c3995c92c912b9e57502d423151002c"
   integrity sha512-iIFCq08H4YyNIX0bV5N6fGQtAmjc4OQZKQCgBP5WHgQaITyGAHPVmAw+Yf7qe0zbRCvCDZdrdEC/191fLGFiww==
 
-tslint-immutable@^5.5.2:
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/tslint-immutable/-/tslint-immutable-5.5.2.tgz#57331f6100156fa7ac4503e121cd2616df5bab8a"
-  integrity sha512-+dSMhEeUyRMrBe9XcjfRXT/FmqWKXsSdxttWoDzhUFSNCg8wfXx29M/ClQ78HhmdTaK+DDQsNS3wTGpSIhOv3g==
+tslint-immutable@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/tslint-immutable/-/tslint-immutable-6.0.0.tgz#a3715a028cb130e09ef8935201d2a5299953767d"
+  integrity sha512-fWTWOs2iD/7HUHarX0Izv7lWSJ89Dr+jc1zqS1xm1PJ9D1MHuA25kiGREwGY/73+HnTTMWa9LPMnTION7LSbYg==
   dependencies:
     tsutils "^2.28.0 || ^3.0.0"
 
