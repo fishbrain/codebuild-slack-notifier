@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@slack/web-api": "^5.0.0",
-    "aws-sdk": "^2.485.0"
+    "aws-sdk": "^2.486.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.27",
