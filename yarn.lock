@@ -436,10 +436,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@types/aws-lambda@^8.10.30":
-  version "8.10.30"
-  resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.30.tgz#ac334e908612d993e0c2fc0c04625f4ad05a50cc"
-  integrity sha512-b7qoehANMfwwl7BcVSn/6NN/4fq7w4T5xO2YnJGT84CAuTl0rdAQGvc9/POfcJcjAeTgiUTqiTTFWDBLq7SsvQ==
+"@types/aws-lambda@^8.10.31":
+  version "8.10.31"
+  resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.31.tgz#f34c42412e59824efa21717c71024f7d04405b51"
+  integrity sha512-xcmOvzVILQoex1oR+vjKnBP3OJn+g92r3yVzeTSmRgLQwBvSOghRPRSx3rVMQivLzAIR6atxlVu3AV9bxc/hQw==
 
 "@types/babel__core@^7.1.0":
   version "7.1.1"
