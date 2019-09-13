@@ -27,7 +27,7 @@
     "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-pseudo-parameters": "^2.4.0",
     "serverless-webpack": "^5.3.1",
-    "ts-jest": "^24.0.2",
+    "ts-jest": "^24.1.0",
     "ts-loader": "^6.1.0",
     "tslint": "^5.20.0",
     "tslint-config-airbnb": "^5.11.1",
