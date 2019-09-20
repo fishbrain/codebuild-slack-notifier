@@ -358,10 +358,10 @@
     ramda "^0.26.1"
     semver "^6.1.1"
 
-"@serverless/enterprise-plugin@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@serverless/enterprise-plugin/-/enterprise-plugin-2.0.0.tgz#01c8fcc9a276982eed8ede9810d377ec12eabf0d"
-  integrity sha512-jfTXC3eAFkgXbsHfDwLr6od3evwnmz0KhVs/p5HXXh37BGX8ETVFUoWsrIOf92flbGDPBEyzcHXX5cfNBlfNKA==
+"@serverless/enterprise-plugin@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@serverless/enterprise-plugin/-/enterprise-plugin-3.0.0.tgz#295dfb353bb0cecf61ab0df3c5f1edf38e550343"
+  integrity sha512-+L+SeQV0MKQN9TBXC6Xmgcw7BVfW8Q3F/lMjB1MPsBd0RZPzYnVlWcVg4cA6tgvkpfdw8NVlh/QXFs+603zHrg==
   dependencies:
     "@serverless/event-mocks" "^1.1.1"
     "@serverless/platform-sdk" "^2.0.3"
@@ -6152,13 +6152,13 @@ serverless-webpack@^5.3.1:
     semver "^5.5.0"
     ts-node "^3.2.0"
 
-serverless@^1.52.0:
-  version "1.52.0"
-  resolved "https://registry.yarnpkg.com/serverless/-/serverless-1.52.0.tgz#1ba17916ff0d72a9d0627dfe99d8345fce02cbc1"
-  integrity sha512-No+hosiPng/0MKfFMNj6lfLmNmn5vzLduss55YkefQNKZ9oJEBeZqBDrUEZC9reTHUpilCx0ESiLqkMoPBst2g==
+serverless@^1.52.1:
+  version "1.52.1"
+  resolved "https://registry.yarnpkg.com/serverless/-/serverless-1.52.1.tgz#d059a6be53d1e750af638d577c51e40517c37399"
+  integrity sha512-1OCDRRHAXWW+udQBStGxw2rBDKEC7i+uQv0qbx/MRrQArnjzEuQIHMKvKWeKKbPAWxV3qZJKPzS55QDuskvO1g==
   dependencies:
     "@serverless/cli" "^1.1.1"
-    "@serverless/enterprise-plugin" "^2.0.0"
+    "@serverless/enterprise-plugin" "^3.0.0"
     archiver "^1.3.0"
     async "^1.5.2"
     aws-sdk "^2.526.0"
