@@ -3147,7 +3147,12 @@ got@^9.6.0:
     to-readable-stream "^1.0.0"
     url-parse-lax "^3.0.0"
 
-graceful-fs@^4.1.0, graceful-fs@^4.1.10, graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.2:
+graceful-fs@4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.1.tgz#1c1f0c364882c868f5bff6512146328336a11b1d"
+  integrity sha512-b9usnbDGnD928gJB3LrCmxoibr3VE4U2SMo5PBuBnokWyDADTqDPXg4YpwKF1trpH+UbGp7QLicO3+aWEy0+mw==
+
+graceful-fs@^4.1.0, graceful-fs@^4.1.10, graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.2.tgz#6f0952605d0140c1cfdb138ed005775b92d67b02"
   integrity sha512-IItsdsea19BoLC7ELy13q1iJFNmd7ofZH5+X/pJr90/nRoPEX0DJo1dHDbgtYWOhJhcCgMDTOw84RZ72q6lB+Q==
@@ -6152,10 +6157,10 @@ serverless-webpack@^5.3.1:
     semver "^5.5.0"
     ts-node "^3.2.0"
 
-serverless@^1.52.1:
-  version "1.52.1"
-  resolved "https://registry.yarnpkg.com/serverless/-/serverless-1.52.1.tgz#d059a6be53d1e750af638d577c51e40517c37399"
-  integrity sha512-1OCDRRHAXWW+udQBStGxw2rBDKEC7i+uQv0qbx/MRrQArnjzEuQIHMKvKWeKKbPAWxV3qZJKPzS55QDuskvO1g==
+serverless@^1.52.2:
+  version "1.52.2"
+  resolved "https://registry.yarnpkg.com/serverless/-/serverless-1.52.2.tgz#8567c1967647b9748607c8be13263d1da4533b5e"
+  integrity sha512-JLRh52heei1kiTg/mdXdVeJXlB26nXI6uK3/jQvG2a16WwrXD+h033azkD9qqk7WgISLgDKPJbvlnsCAXLcX5Q==
   dependencies:
     "@serverless/cli" "^1.1.1"
     "@serverless/enterprise-plugin" "^3.0.0"
@@ -6172,7 +6177,7 @@ serverless@^1.52.1:
     fs-extra "^0.30.0"
     get-stdin "^5.0.1"
     globby "^6.1.0"
-    graceful-fs "^4.2.2"
+    graceful-fs "4.2.1"
     https-proxy-agent "^2.2.2"
     inquirer "^6.5.2"
     is-docker "^1.1.0"
