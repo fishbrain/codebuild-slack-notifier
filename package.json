@@ -25,7 +25,7 @@
     "prettier": "^1.18.2",
     "serverless": "^1.53.0",
     "serverless-iam-roles-per-function": "^2.0.2",
-    "serverless-pseudo-parameters": "^2.4.0",
+    "serverless-pseudo-parameters": "^2.5.0",
     "serverless-webpack": "^5.3.1",
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.2.0",
