@@ -35,7 +35,7 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-immutable": "^6.0.1",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.6.4",
+    "typescript": "^3.7.2",
     "typescript-tslint-plugin": "0.5.4",
     "webpack": "^4.41.2"
   },
