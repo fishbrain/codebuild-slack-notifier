@@ -2,18 +2,20 @@ service:
   name: ${self:custom.package.name}
 
 plugins:
-  - serverless-webpack
+  - serverless-scriptable-plugin
   - serverless-iam-roles-per-function
   - serverless-pseudo-parameters
 
 custom:
   package: ${file(./package.json)}
+  scriptHooks:
+    before:package:createDeploymentArtifacts: npm run build
 
 provider:
   name: aws
   stage: ${opt:stage, 'tools'}
   memorySize: 128
-  runtime: nodejs8.10
+  runtime: nodejs12.x
   timeout: 15
   region: ${opt:region, 'eu-west-1'}
   environment:
