@@ -29,10 +29,12 @@ provider:
 
 package:
   individually: true
+  exclude:
+    - node_modules/aws-sdk/**
 
 functions:
   PostUpdateToSlack:
-    handler: index.handler
+    handler: dist/index.handler
     reservedConcurrency: 1
     iamRoleStatements:
       - Effect: Allow

@@ -11,8 +11,8 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "plugins": [{ "name": "typescript-tslint-plugin" }],
-    "types": ["jest"]
+    "types": ["jest"],
+    "outDir": "dist"
   },
   "exclude": [
     // "node_modules",
