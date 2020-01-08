@@ -1,132 +1,16 @@
 import { MessageAttachment, WebClient } from '@slack/web-api';
+
 import {
   Channel,
   findMessageForId,
   MessageResult,
   updateOrAddAttachment,
 } from './slack';
-
-/**
- * See https://docs.aws.amazon.com/codebuild/latest/userguide/sample-build-notifications.html#sample-build-notifications-ref
- */
-export type CodeBuildPhase =
-  | 'SUBMITTED'
-  | 'PROVISIONING'
-  | 'DOWNLOAD_SOURCE'
-  | 'INSTALL'
-  | 'PRE_BUILD'
-  | 'BUILD'
-  | 'POST_BUILD'
-  | 'UPLOAD_ARTIFACTS'
-  | 'FINALIZING'
-  | 'COMPLETED';
-
-export type CodeBuildStatus =
-  | 'IN_PROGRESS'
-  | 'SUCCEEDED'
-  | 'TIMED_OUT'
-  | 'STOPPED'
-  | 'FAILED'
-  | 'SUCCEEDED'
-  | 'FAULT'
-  | 'CLIENT_ERROR';
-
-interface CodeBuildEnvironmentVariable {
-  name: string;
-  value: string;
-  type: 'PLAINTEXT' | 'SSM';
-}
-
-interface CodeBuildPhaseInformation {
-  'phase-context'?: string[];
-  'start-time': string;
-  'end-time'?: string;
-  'duration-in-seconds'?: number;
-  'phase-type': CodeBuildPhase;
-  'phase-status'?: CodeBuildStatus;
-}
-
-interface CodeBuildEventAdditionalInformation {
-  artifact?: {
-    md5sum?: string;
-    sha256sum?: string;
-    location: string;
-  };
-  environment: {
-    image: string;
-    'privileged-mode': boolean;
-    'compute-type':
-      | 'BUILD_GENERAL1_SMALL'
-      | 'BUILD_GENERAL1_MEDIUM'
-      | 'BUILD_GENERAL1_LARGE';
-    type: 'LINUX_CONTAINER';
-    'environment-variables': CodeBuildEnvironmentVariable[];
-  };
-  'timeout-in-minutes': number;
-  'build-complete': boolean;
-  initiator: string;
-  'build-start-time': string;
-  source: {
-    buildspec?: string;
-    auth?: {
-      type: string; // can be 'OAUTH' and possibly other values
-    };
-    location: string;
-    type: 'S3' | 'GITHUB';
-  };
-  'source-version'?: string;
-  logs?: {
-    'group-name': string;
-    'stream-name': string;
-    'deep-link': string;
-  };
-  phases?: CodeBuildPhaseInformation[];
-}
-
-export interface CodeBuildStateEvent {
-  version: string;
-  id: string;
-  'detail-type': 'CodeBuild Build State Change';
-  source: 'aws.codebuild';
-  account: string;
-  time: string;
-  region: string;
-  resources: string[];
-  detail: {
-    'build-status': CodeBuildStatus;
-    'project-name': string;
-    'build-id': string;
-    'additional-information': CodeBuildEventAdditionalInformation;
-    'current-phase': CodeBuildPhase;
-    'current-phase-context': string;
-    version: string;
-  };
-}
-
-export interface CodeBuildPhaseEvent {
-  version: string;
-  id: string;
-  'detail-type': 'CodeBuild Build Phase Change';
-  source: 'aws.codebuild';
-  account: string;
-  time: string;
-  region: string;
-  resources: string[];
-  detail: {
-    'completed-phase': CodeBuildPhase;
-    'project-name': string;
-    'build-id': string;
-    'completed-phase-context': string;
-    'completed-phase-status': CodeBuildStatus;
-    'completed-phase-duration-seconds': number;
-    version: string;
-    'completed-phase-start': string;
-    'completed-phase-end': string;
-    'additional-information': CodeBuildEventAdditionalInformation;
-  };
-}
-
-export type CodeBuildEvent = CodeBuildStateEvent | CodeBuildPhaseEvent;
+import {
+  CodeBuildStatus,
+  CodeBuildEvent,
+  CodeBuildStateEvent,
+} from './codebuildTypes';
 
 export const buildStatusToColor = (status: CodeBuildStatus): string => {
   switch (status) {
@@ -144,6 +28,8 @@ export const buildStatusToColor = (status: CodeBuildStatus): string => {
       return 'warning';
     case 'CLIENT_ERROR':
       return 'warning';
+    default:
+      return 'danger';
   }
 };
 
@@ -163,6 +49,8 @@ const buildStatusToText = (status: CodeBuildStatus): string => {
       return 'errored';
     case 'CLIENT_ERROR':
       return 'had client error';
+    default:
+      return 'unknown status';
   }
 };
 
@@ -186,6 +74,9 @@ export const timeString = (seconds: number | undefined): string => {
   return '';
 };
 
+// a commit sha has a length of 40 chars
+const SHA_LENGTH = 40;
+
 // Git revision, possibly with URL
 const gitRevision = (event: CodeBuildEvent): string => {
   if (event.detail['additional-information'].source.type === 'GITHUB') {
@@ -202,9 +93,7 @@ const gitRevision = (event: CodeBuildEvent): string => {
     if (pr) {
       return `<${githubProjectUrl}/pull/${pr[1]}|Pull request #${pr[1]}>`;
     }
-    // Commit (a commit sha has a length of 40 chars)
-    if (sourceVersion.length === 40) {
-      // tslint:disable-line:no-magic-numbers
+    if (sourceVersion.length === SHA_LENGTH) {
       return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
     }
     // Branch
@@ -216,7 +105,7 @@ const gitRevision = (event: CodeBuildEvent): string => {
 export const buildPhaseAttachment = (
   event: CodeBuildEvent,
 ): MessageAttachment => {
-  const phases = event.detail['additional-information'].phases;
+  const { phases } = event.detail['additional-information'];
   if (phases) {
     return {
       fallback: `Current phase: ${phases[phases.length - 1]['phase-type']}`,

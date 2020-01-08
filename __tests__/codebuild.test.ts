@@ -1,11 +1,10 @@
 import {
   buildId,
   buildPhaseAttachment,
-  CodeBuildEvent,
-  CodeBuildPhaseEvent,
   projectLink,
   timeString,
 } from '../codebuild';
+import { CodeBuildEvent, CodeBuildPhaseEvent } from '../codebuildTypes';
 
 const mockStateEvent: CodeBuildEvent = {
   account: '123456789012',

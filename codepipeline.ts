@@ -1,4 +1,13 @@
 import { MessageAttachment, WebClient } from '@slack/web-api';
+import {
+  CodePipelineState,
+  CodePipelineStageState,
+  CodePipelineActionState,
+  CodePipelineCloudWatchStageEvent,
+  CodePipelineCloudWatchActionEvent,
+  CodePipelineCloudWatchEvent,
+  CodePipelineCloudWatchPipelineEvent,
+} from 'aws-lambda';
 
 import {
   Channel,
@@ -6,103 +15,6 @@ import {
   MessageResult,
   updateOrAddAttachment,
 } from './slack';
-
-/**
- * See https://docs.aws.amazon.com/codepipeline/latest/userguide/detect-state-changes-cloudwatch-events.html
- */
-export type CodePipelineState =
-  | 'STARTED'
-  | 'SUCCEEDED'
-  | 'RESUMED'
-  | 'FAILED'
-  | 'CANCELED'
-  | 'SUPERSEDED';
-
-export type CodePipelineStageState =
-  | 'STARTED'
-  | 'SUCCEEDED'
-  | 'RESUMED'
-  | 'FAILED'
-  | 'CANCELED';
-
-export type CodePipelineActionState =
-  | 'STARTED'
-  | 'SUCCEEDED'
-  | 'FAILED'
-  | 'CANCELED';
-
-export interface CodePipelinePipelineEvent {
-  version: string;
-  id: string;
-  'detail-type': 'CodePipeline Pipeline Execution State Change';
-  source: 'aws.codepipeline';
-  account: string;
-  time: string;
-  region: string;
-  resources: string[];
-  detail: {
-    pipeline: string;
-    version: number;
-    state: CodePipelineState;
-    'execution-id': string;
-  };
-}
-
-export interface CodePipelineStageEvent {
-  version: string;
-  id: string;
-  'detail-type': 'CodePipeline Stage Execution State Change';
-  source: 'aws.codepipeline';
-  account: string;
-  time: string;
-  region: string;
-  resources: string[];
-  detail: {
-    pipeline: string;
-    version: number;
-    'execution-id': string;
-    stage: string;
-    state: CodePipelineStageState;
-  };
-}
-
-export type CodePipelineActionCategory =
-  | 'Approval'
-  | 'Build'
-  | 'Deploy'
-  | 'Invoke'
-  | 'Source'
-  | 'Test';
-
-export interface CodePipelineActionEvent {
-  version: string;
-  id: string;
-  'detail-type': 'CodePipeline Action Execution State Change';
-  source: 'aws.codepipeline';
-  account: string;
-  time: string;
-  region: string;
-  resources: string[];
-  detail: {
-    pipeline: string;
-    version: number;
-    'execution-id': string;
-    stage: string;
-    action: string;
-    state: CodePipelineActionState;
-    type: {
-      owner: 'AWS' | 'Custom' | 'ThirdParty';
-      category: CodePipelineActionCategory;
-      provider: 'CodeDeploy';
-      version: number;
-    };
-  };
-}
-
-export type CodePipelineEvent =
-  | CodePipelinePipelineEvent
-  | CodePipelineStageEvent
-  | CodePipelineActionEvent;
 
 const stateColors: {
   [K in
@@ -134,7 +46,7 @@ const stateText: {
 
 // Create Pipeline attachment
 export const pipelineAttachment = (
-  event: CodePipelinePipelineEvent,
+  event: CodePipelineCloudWatchPipelineEvent,
 ): MessageAttachment => {
   return {
     color: stateColors[event.detail.state],
@@ -147,7 +59,7 @@ export const pipelineAttachment = (
 
 // Create Stage attachment
 export const stageAttachment = (
-  event: CodePipelineStageEvent,
+  event: CodePipelineCloudWatchStageEvent,
 ): MessageAttachment => {
   return {
     color: stateColors[event.detail.state],
@@ -159,7 +71,7 @@ export const stageAttachment = (
 
 // Create Action attachment
 export const actionAttachment = (
-  event: CodePipelineActionEvent,
+  event: CodePipelineCloudWatchActionEvent,
 ): MessageAttachment => {
   return {
     color: stateColors[event.detail.state],
@@ -171,7 +83,7 @@ export const actionAttachment = (
 
 // Event handler
 export const handleCodePipelineEvent = async (
-  event: CodePipelineEvent,
+  event: CodePipelineCloudWatchEvent,
   slack: WebClient,
   channel: Channel,
 ): Promise<MessageResult | void> => {
@@ -182,7 +94,7 @@ export const handleCodePipelineEvent = async (
   );
 
   switch (event['detail-type']) {
-    case 'CodePipeline Pipeline Execution State Change':
+    case 'CodePipeline Pipeline Execution State Change': {
       const pAttachment = pipelineAttachment(event);
       if (message) {
         return slack.chat.update({
@@ -201,8 +113,8 @@ export const handleCodePipelineEvent = async (
         channel: channel.id,
         text: '',
       }) as Promise<MessageResult>;
-
-    case 'CodePipeline Stage Execution State Change':
+    }
+    case 'CodePipeline Stage Execution State Change': {
       const sAttachment = stageAttachment(event);
       if (message) {
         return slack.chat.update({
@@ -217,8 +129,8 @@ export const handleCodePipelineEvent = async (
         }) as Promise<MessageResult>;
       }
       return undefined;
-
-    case 'CodePipeline Action Execution State Change':
+    }
+    case 'CodePipeline Action Execution State Change': {
       const aAttachment = actionAttachment(event);
       if (message) {
         return slack.chat.update({
@@ -233,5 +145,7 @@ export const handleCodePipelineEvent = async (
         }) as Promise<MessageResult>;
       }
       return undefined;
+    }
+    default:
   }
 };

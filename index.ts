@@ -1,14 +1,20 @@
 import { WebClient } from '@slack/web-api';
-import { Callback, Context, Handler } from 'aws-lambda';
+import {
+  Callback,
+  Context,
+  Handler,
+  CodePipelineCloudWatchEvent,
+} from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 
-import { CodeBuildEvent, handleCodeBuildEvent } from './codebuild';
-import { CodePipelineEvent, handleCodePipelineEvent } from './codepipeline';
+import { handleCodeBuildEvent } from './codebuild';
+import { CodeBuildEvent } from './codebuildTypes';
+import { handleCodePipelineEvent } from './codepipeline';
 import { Channel, ChannelsResult } from './slack';
 
 export const isCodePipelineEvent = (
-  event: CodeBuildEvent | CodePipelineEvent,
-): event is CodePipelineEvent => {
+  event: CodeBuildEvent | CodePipelineCloudWatchEvent,
+): event is CodePipelineCloudWatchEvent => {
   return (
     event['detail-type'] === 'CodePipeline Action Execution State Change' ||
     event['detail-type'] === 'CodePipeline Pipeline Execution State Change' ||
@@ -19,7 +25,9 @@ export const isCodePipelineEvent = (
 const ssm = new AWS.SSM();
 
 // Get project name out of the event
-export const getProjectName = (event: CodeBuildEvent | CodePipelineEvent) => {
+export const getProjectName = (
+  event: CodeBuildEvent | CodePipelineCloudWatchEvent,
+): string => {
   if (isCodePipelineEvent(event)) {
     return event.detail.pipeline;
   }
@@ -27,7 +35,7 @@ export const getProjectName = (event: CodeBuildEvent | CodePipelineEvent) => {
 };
 
 export const handler: Handler = async (
-  event: CodeBuildEvent | CodePipelineEvent,
+  event: CodeBuildEvent | CodePipelineCloudWatchEvent,
   _context: Context,
   _callback: Callback | undefined,
 ) => {
@@ -95,7 +103,7 @@ export const handler: Handler = async (
         return handleCodeBuildEvent(event, slack, channel);
       }
     });
-    Promise.all(requests).then(r => {
+    await Promise.all(requests).then(r => {
       console.log(
         JSON.stringify(
           r.filter(i => i != null),

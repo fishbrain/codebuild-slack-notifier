@@ -1,8 +1,8 @@
-const child_process = require('child_process');
+import childProcess from 'child_process';
 
-module.exports.gitCommitSHA = () =>
+export const gitCommitSHA = async () =>
   new Promise((resolve, reject) => {
-    child_process.exec('git rev-parse HEAD', function(err, stdout) {
+    childProcess.exec('git rev-parse HEAD', (err, stdout) => {
       return err ? reject(err) : resolve(stdout.toString().trim());
     });
   });
