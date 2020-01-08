@@ -4,9 +4,7 @@ import * as AWS from 'aws-sdk';
 
 import { CodeBuildEvent, handleCodeBuildEvent } from './codebuild';
 import { CodePipelineEvent, handleCodePipelineEvent } from './codepipeline';
-import { Channel, ChannelsResult, Message } from './slack';
-
-export const messageCache = new Map<string, Message>();
+import { Channel, ChannelsResult } from './slack';
 
 export const isCodePipelineEvent = (
   event: CodeBuildEvent | CodePipelineEvent,

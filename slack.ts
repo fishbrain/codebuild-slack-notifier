@@ -1,5 +1,6 @@
 import { MessageAttachment, WebAPICallResult, WebClient } from '@slack/web-api';
-import { messageCache } from '.';
+
+export const messageCache = new Map<string, Message>();
 
 // Response includes extra fields not part of the request
 export type MessageAttachmentResponse = MessageAttachment & {
