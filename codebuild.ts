@@ -167,11 +167,7 @@ const buildStatusToText = (status: CodeBuildStatus): string => {
 };
 
 export const projectLink = (event: CodeBuildEvent): string => {
-  return `<https://${
-    event.region
-  }.console.aws.amazon.com/codebuild/home?region=${event.region}#/projects/${
-    event.detail['project-name']
-  }/view|${event.detail['project-name']}>`;
+  return `<https://${event.region}.console.aws.amazon.com/codebuild/home?region=${event.region}#/projects/${event.detail['project-name']}/view|${event.detail['project-name']}>`;
 };
 
 // Get the build ID from the Codebuild event
@@ -198,14 +194,17 @@ const gitRevision = (event: CodeBuildEvent): string => {
     if (sourceVersion === undefined) {
       return 'unknown';
     }
-    const githubProjectUrl = event.detail['additional-information'].source.location.slice(0, -('.git'.length));
+    const githubProjectUrl = event.detail[
+      'additional-information'
+    ].source.location.slice(0, -'.git'.length);
     // PR
     const pr = sourceVersion.match(/^pr\/(\d+)/);
     if (pr) {
       return `<${githubProjectUrl}/pull/${pr[1]}|Pull request #${pr[1]}>`;
     }
     // Commit (a commit sha has a length of 40 chars)
-    if(sourceVersion.length === 40) { // tslint:disable-line:no-magic-numbers
+    if (sourceVersion.length === 40) {
+      // tslint:disable-line:no-magic-numbers
       return `<${githubProjectUrl}/commit/${sourceVersion}|${sourceVersion}>`;
     }
     // Branch
@@ -287,7 +286,8 @@ const buildEventToMessage = (
           {
             short: false,
             title: 'Initiator',
-            value: event.detail['additional-information'].initiator || 'unknown',
+            value:
+              event.detail['additional-information'].initiator || 'unknown',
           },
           {
             short: false,
