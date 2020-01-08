@@ -1,4 +1,5 @@
 import { MessageAttachment, WebClient } from '@slack/web-api';
+
 import {
   Channel,
   findMessageForId,
@@ -107,7 +108,7 @@ const stateColors: {
   [K in
     | CodePipelineState
     | CodePipelineStageState
-    | CodePipelineActionState]: string
+    | CodePipelineActionState]: string;
 } = {
   CANCELED: 'danger',
   FAILED: 'danger',
@@ -121,7 +122,7 @@ const stateText: {
   [K in
     | CodePipelineState
     | CodePipelineStageState
-    | CodePipelineActionState]: string
+    | CodePipelineActionState]: string;
 } = {
   CANCELED: ':no_entry: cancelled',
   FAILED: ':x: failed',
