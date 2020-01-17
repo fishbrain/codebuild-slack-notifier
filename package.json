@@ -33,7 +33,7 @@
     "serverless-pseudo-parameters": "^2.5.0",
     "serverless-scriptable-plugin": "^1.0.5",
     "ts-jest": "^24.2.0",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   },
   "prettier": {
     "singleQuote": true,
