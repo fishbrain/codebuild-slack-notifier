@@ -20,7 +20,7 @@
     "aws-sdk": "^2.654.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.47",
+    "@types/aws-lambda": "^8.10.48",
     "@types/jest": "^25.2.1",
     "@types/node": "^13.11.0",
     "eslint": "^6.8.0",
