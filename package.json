@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.63",
-    "@types/jest": "^26.0.14",
+    "@types/jest": "^26.0.16",
     "@types/node": "^14.11.8",
     "eslint": "^7.10.0",
     "eslint-config-fishbrain-base": "^2.1.0",
