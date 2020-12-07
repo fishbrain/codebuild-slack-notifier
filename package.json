@@ -29,7 +29,7 @@
     "jest": "^25.5.4",
     "prettier": "^1.19.1",
     "serverless": "^2.5.0",
-    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-iam-roles-per-function": "^3.0.1",
     "serverless-pseudo-parameters": "^2.5.0",
     "serverless-scriptable-plugin": "^1.0.5",
     "ts-jest": "^25.5.1",
