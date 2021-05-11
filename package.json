@@ -16,7 +16,7 @@
     "logs:tools:PostUpdateToSlack": "sls logs -f PostUpdateToSlack --region eu-west-1 --stage tools --startTime 10m -t"
   },
   "dependencies": {
-    "@slack/web-api": "^5.12.0",
+    "@slack/web-api": "^6.2.0",
     "aws-sdk": "^2.832.0"
   },
   "devDependencies": {
